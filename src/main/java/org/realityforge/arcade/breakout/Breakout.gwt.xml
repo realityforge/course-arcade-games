@@ -1,0 +1,8 @@
+<module rename-to='breakout'>
+  <inherits name='org.realityforge.arcade.Arcade'/>
+
+  <entry-point class='org.realityforge.arcade.breakout.Breakout'/>
+
+  <source path=''/>
+  <public path='public'/>
+</module>
