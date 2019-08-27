@@ -131,8 +131,8 @@ public class Tennis
 
   private void ballReset()
   {
-    _ballSpeedX = -_ballSpeedX;
-    _ballSpeedY = -_ballSpeedY;
+    _ballSpeedX = -Math.min( _ballSpeedX, INITIAL_X_SPEED );
+    _ballSpeedY = Math.min( _ballSpeedY / _ballSpeedX, 2 ) * -INITIAL_Y_SPEED;
     _ballX = _canvas.width / 2D;
     _ballY = _canvas.height / 2D;
   }
