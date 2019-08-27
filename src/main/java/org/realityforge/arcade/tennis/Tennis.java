@@ -22,6 +22,9 @@ public class Tennis
   private static final double PADDLE_WIDTH = 10D;
   // The zone inside panel that the computer player targets
   private static final double AI_PADDLE_TARGET_ZONE = PADDLE_HEIGHT * 0.7D;
+  //
+  private static final double MAX_REFLECT_SPEED = 12.5D;
+  private static final double VERTICAL_REFLECT_FORCE_TRANSFER = ( 2 * MAX_REFLECT_SPEED ) / PADDLE_HEIGHT;
   private static final double INITIAL_X_SPEED = 5D;
   private static final double INITIAL_Y_SPEED = 3D;
   private HTMLCanvasElement _canvas;
@@ -90,6 +93,10 @@ public class Tennis
       else
       {
         _ballSpeedX = -_ballSpeedX;
+
+        // Gives some ball control so that depending on where you hit the ball wil depend on what angle
+        // and speed the ball returns to other side.
+        _ballSpeedY = ( _ballY - ( _paddle1Y + HALF_PADDLE_HEIGHT ) ) * VERTICAL_REFLECT_FORCE_TRANSFER;
       }
     }
     if ( ( _ballX + BALL_RADIUS ) > _canvas.width )
@@ -102,6 +109,9 @@ public class Tennis
       else
       {
         _ballSpeedX = -_ballSpeedX;
+
+        // Ball control for player 2
+        _ballSpeedY = ( _ballY - ( _paddle2Y + HALF_PADDLE_HEIGHT ) ) * VERTICAL_REFLECT_FORCE_TRANSFER;
       }
     }
 
