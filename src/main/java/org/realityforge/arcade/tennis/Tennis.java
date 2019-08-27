@@ -117,7 +117,7 @@ public class Tennis
     // zone but once the ball is in the target zone it will not move the paddle.
     // This creates more realistic movement and stops paddle jitter as step size
     // is constant  and otherwise the AI would constantly be adjusting
-    final double paddle2Center = _paddle2Y + PADDLE_HEIGHT / 2;
+    final double paddle2Center = _paddle2Y + HALF_PADDLE_HEIGHT;
 
     if ( paddle2Center < _ballY - ( AI_PADDLE_TARGET_ZONE / 2D ) )
     {
