@@ -203,6 +203,7 @@ public class Tennis
     // Ball
     drawCircle( _ballX, _ballY, BALL_RADIUS, "red" );
 
+    // Draw scores
     _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( "white" );
     _context.fillText( "P1 Score: " + _player1Score, 100D, 100D );
     // Assume 120 pixels to represent text
