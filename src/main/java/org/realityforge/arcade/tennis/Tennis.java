@@ -21,12 +21,14 @@ public class Tennis
   private static final double PADDLE_WIDTH = 10D;
   // The zone inside panel that the computer player targets
   private static final double AI_PADDLE_TARGET_ZONE = PADDLE_HEIGHT * 0.7D;
+  private static final double INITIAL_X_SPEED = 5D;
+  private static final double INITIAL_Y_SPEED = 3D;
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
   private double _ballX = 50D;
   private double _ballY = 50D;
-  private double _ballSpeedX = 5D;
-  private double _ballSpeedY = 3D;
+  private double _ballSpeedX = INITIAL_X_SPEED;
+  private double _ballSpeedY = INITIAL_Y_SPEED;
   private double _paddle1Y = 200D;
   private double _paddle2Y = 200D;
   private int _player1Score;
