@@ -158,7 +158,7 @@ public class Tennis
   private void renderWorld()
   {
     // Background
-    drawRect( 0D, 0D, _canvas.width, _canvas.height, "black" );
+    clearBackground();
 
     // Player Paddle
     drawRect( 0D, _paddle1Y, PADDLE_WIDTH, PADDLE_HEIGHT, "white" );
@@ -173,6 +173,11 @@ public class Tennis
     _context.fillText( "P1 Score: " + _player1Score, 100D, 100D );
     // Assume 120 pixels to represent text
     _context.fillText( "P2 Score: " + _player2Score, _canvas.width - 100D - 120D, 100D );
+  }
+
+  private void clearBackground()
+  {
+    drawRect( 0D, 0D, _canvas.width, _canvas.height, "black" );
   }
 
   @SuppressWarnings( "SameParameterValue" )
