@@ -152,9 +152,9 @@ public class Tennis
     drawCircle( _ballX, _ballY, BALL_RADIUS, "red" );
 
     _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( "white" );
-    _context.fillText( "P1 Score: " + _player1Score, 100D,100D );
+    _context.fillText( "P1 Score: " + _player1Score, 100D, 100D );
     // Assume 120 pixels to represent text
-    _context.fillText( "P2 Score: " + _player2Score, _canvas.width - 100D - 120D,100D );
+    _context.fillText( "P2 Score: " + _player2Score, _canvas.width - 100D - 120D, 100D );
   }
 
   @SuppressWarnings( "SameParameterValue" )
