@@ -38,6 +38,7 @@ public class Tennis
   private double _paddle2Y = 200D;
   private int _player1Score;
   private int _player2Score;
+  private boolean _showingWinScreen;
 
   @Override
   public void onModuleLoad()
@@ -45,10 +46,21 @@ public class Tennis
     _canvas = (HTMLCanvasElement) DomGlobal.document.getElementById( "gameCanvas" );
     _context = Js.uncheckedCast( _canvas.getContext( "2d" ) );
 
+    _canvas.addEventListener( "mousedown", e -> onMouseClick() );
     _canvas.addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
 
     runFrame();
     DomGlobal.setInterval( v -> runFrame(), FRAME_DELAY );
+  }
+
+  private void onMouseClick()
+  {
+    if ( _showingWinScreen )
+    {
+      _player1Score = 0;
+      _player2Score = 0;
+      _showingWinScreen = false;
+    }
   }
 
   @SuppressWarnings( { "unused" } )
@@ -75,8 +87,15 @@ public class Tennis
 
   private void runFrame()
   {
-    simulateWorld();
-    renderWorld();
+    if ( _showingWinScreen )
+    {
+      renderWinScreen();
+    }
+    else
+    {
+      simulateWorld();
+      renderWorld();
+    }
   }
 
   private void simulateWorld()
@@ -146,13 +165,28 @@ public class Tennis
   {
     if ( _player1Score >= WINNING_SCORE || _player2Score >= WINNING_SCORE )
     {
-      _player1Score = 0;
-      _player2Score = 0;
+      _showingWinScreen = true;
     }
     _ballSpeedX = -Math.min( _ballSpeedX, INITIAL_X_SPEED );
     _ballSpeedY = Math.min( _ballSpeedY / _ballSpeedX, 2 ) * -INITIAL_Y_SPEED;
     _ballX = _canvas.width / 2D;
     _ballY = _canvas.height / 2D;
+  }
+
+  private void renderWinScreen()
+  {
+    clearBackground();
+
+    _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( "white" );
+    if ( _player1Score >= WINNING_SCORE  )
+    {
+      _context.fillText( "Player 1 is the winner! Huzzah!", 120D, 300D );
+    }
+    else
+    {
+      _context.fillText( "Player 2 is the winner! Huzzah!", 500D, 300D );
+    }
+    _context.fillText( "Click to continue", 350D, 500D );
   }
 
   private void renderWorld()
