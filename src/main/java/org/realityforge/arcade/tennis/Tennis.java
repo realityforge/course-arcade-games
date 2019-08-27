@@ -47,7 +47,7 @@ public class Tennis
 
     _canvas.addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
 
-    renderWorld();
+    runFrame();
     DomGlobal.setInterval( v -> runFrame(), FRAME_DELAY );
   }
 
