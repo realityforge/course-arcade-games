@@ -18,6 +18,7 @@ public class Tennis
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
   private static final double BALL_RADIUS = 10D;
   private static final double PADDLE_HEIGHT = 100D;
+  private static final double HALF_PADDLE_HEIGHT = PADDLE_HEIGHT / 2;
   private static final double PADDLE_WIDTH = 10D;
   // The zone inside panel that the computer player targets
   private static final double AI_PADDLE_TARGET_ZONE = PADDLE_HEIGHT * 0.7D;
@@ -59,7 +60,7 @@ public class Tennis
     final double mouseY = event.clientY - rect.top - root.scrollTop;
 
     // Our pointer should be center of paddle and the paddle can not go outside bounds
-    _paddle1Y = limitPaddleToScreen( mouseY - ( PADDLE_HEIGHT / 2 ) );
+    _paddle1Y = limitPaddleToScreen( mouseY - HALF_PADDLE_HEIGHT );
   }
 
   // Make sure paddle never goes off screen
