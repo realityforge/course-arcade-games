@@ -178,7 +178,7 @@ public class Tennis
     clearBackground();
 
     _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( "white" );
-    if ( _player1Score >= WINNING_SCORE  )
+    if ( _player1Score >= WINNING_SCORE )
     {
       _context.fillText( "Player 1 is the winner! Huzzah!", 120D, 300D );
     }
