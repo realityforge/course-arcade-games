@@ -203,6 +203,12 @@ public class Tennis
     // Ball
     drawCircle( _ballX, _ballY, BALL_RADIUS, "red" );
 
+    // Draw net
+    for ( int i = 0; i < _canvas.height; i += 40 )
+    {
+      drawRect( _canvas.width / 2D - 1D, i, 2, 20, "white" );
+    }
+
     // Draw scores
     _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( "white" );
     _context.fillText( "P1 Score: " + _player1Score, 100D, 100D );
