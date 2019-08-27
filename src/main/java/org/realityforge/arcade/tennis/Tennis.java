@@ -13,6 +13,7 @@ import jsinterop.base.Js;
 public class Tennis
   implements EntryPoint
 {
+  private static final int WINNING_SCORE = 3;
   private static final int FRAMES_PER_SECOND = 60;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
@@ -87,8 +88,9 @@ public class Tennis
     {
       if ( ( _ballY + BALL_RADIUS < _paddle1Y ) || ( _ballY - BALL_RADIUS > _paddle1Y + PADDLE_HEIGHT ) )
       {
-        ballReset();
+        // Score changed before ballReset as winning condition check occurs inside ballReset
         _player2Score++;
+        ballReset();
       }
       else
       {
@@ -103,8 +105,9 @@ public class Tennis
     {
       if ( ( _ballY + BALL_RADIUS < _paddle2Y ) || ( _ballY - BALL_RADIUS > _paddle2Y + PADDLE_HEIGHT ) )
       {
-        ballReset();
+        // Score changed before ballReset as winning condition check occurs inside ballReset
         _player1Score++;
+        ballReset();
       }
       else
       {
@@ -141,6 +144,11 @@ public class Tennis
 
   private void ballReset()
   {
+    if ( _player1Score >= WINNING_SCORE || _player2Score >= WINNING_SCORE )
+    {
+      _player1Score = 0;
+      _player2Score = 0;
+    }
     _ballSpeedX = -Math.min( _ballSpeedX, INITIAL_X_SPEED );
     _ballSpeedY = Math.min( _ballSpeedY / _ballSpeedX, 2 ) * -INITIAL_Y_SPEED;
     _ballX = _canvas.width / 2D;
