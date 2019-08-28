@@ -134,6 +134,15 @@ public class Breakout
 
   private void simulateWorld()
   {
+    moveBall();
+
+    ballBrickCollisionDetection();
+
+    ballPaddleColisionDetection();
+  }
+
+  private void moveBall()
+  {
     _ballX += _ballSpeedX;
     _ballY += _ballSpeedY;
 
@@ -157,6 +166,19 @@ public class Breakout
     {
       _ballSpeedX = -_ballSpeedX;
     }
+  }
+
+  private void ballReset()
+  {
+    _ballSpeedX = ( Math.random() < 0.5 ? -1D : 1D ) * randomValue( MIN_INITIAL_X_SPEED, MAX_INITIAL_X_SPEED );
+    _ballSpeedY = randomValue( MIN_INITIAL_Y_SPEED, MAX_INITIAL_Y_SPEED );
+
+    _ballX = _canvas.width / 2D;
+    _ballY = _canvas.height / 2D;
+  }
+
+  private void ballBrickCollisionDetection()
+  {
     final int ballBrickCol = toBrickColumn( _ballX );
     final int ballBrickRow = toBrickRow( _ballY );
     if ( isValidBrickCoordinates( ballBrickCol, ballBrickRow ) )
@@ -167,6 +189,15 @@ public class Breakout
         _ballSpeedY = -_ballSpeedY;
       }
     }
+  }
+
+  private void ballPaddleColisionDetection()
+  {
+    final double ballTopY = _ballY - BALL_RADIUS;
+    final double ballBottomY = _ballY + BALL_RADIUS;
+    final double ballLeftX = _ballX - BALL_RADIUS;
+    final double ballRightX = _ballX + BALL_RADIUS;
+
     final double paddleTopY = _canvas.height - PADDLE_Y_INSET;
     final double paddleBottomY = paddleTopY + PADDLE_HEIGHT;
     final double paddleLeftX = _paddlePositionX;
@@ -184,15 +215,6 @@ public class Breakout
       final double ballDistanceFromPaddleCenter = _ballX - paddleCenter;
       _ballSpeedX = ballDistanceFromPaddleCenter * HORIZONTAL_REFLECT_FORCE_TRANSFER;
     }
-  }
-
-  private void ballReset()
-  {
-    _ballSpeedX = ( Math.random() < 0.5 ? -1D : 1D ) * randomValue( MIN_INITIAL_X_SPEED, MAX_INITIAL_X_SPEED );
-    _ballSpeedY = randomValue( MIN_INITIAL_Y_SPEED, MAX_INITIAL_Y_SPEED );
-
-    _ballX = _canvas.width / 2D;
-    _ballY = _canvas.height / 2D;
   }
 
   private double randomValue( final double min, final double max )
