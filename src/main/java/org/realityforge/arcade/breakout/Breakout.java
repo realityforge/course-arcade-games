@@ -15,6 +15,8 @@ import jsinterop.base.Js;
 public class Breakout
   implements EntryPoint
 {
+  private static final int WORLD_WIDTH = 800;
+  private static final int WORLD_HEIGHT = 600;
   private static final int FRAMES_PER_SECOND = 30;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
@@ -55,7 +57,10 @@ public class Breakout
   @Override
   public void onModuleLoad()
   {
-    _canvas = (HTMLCanvasElement) DomGlobal.document.getElementById( "gameCanvas" );
+    _canvas = (HTMLCanvasElement) DomGlobal.document.createElement( "canvas" );
+    _canvas.height = WORLD_HEIGHT;
+    _canvas.width = WORLD_WIDTH;
+    DomGlobal.document.documentElement.appendChild( _canvas );
     _context = Js.uncheckedCast( _canvas.getContext( "2d" ) );
 
     // Center paddle
