@@ -221,12 +221,17 @@ public class Breakout
       final double rowY = SPACE_ABOVE_BRICKS + i * BRICK_HEIGHT;
       for ( int j = 0; j < BRICKS_PER_ROW; j++ )
       {
-        if ( brickGrid[ i * BRICKS_PER_ROW + j ] )
+        if ( brickGrid[ brickIndex( j, i ) ] )
         {
           drawRect( BRICK_WIDTH * j, rowY, BRICK_WIDTH - BRICK_GAP, BRICK_HEIGHT - BRICK_GAP, "blue" );
         }
       }
     }
+  }
+
+  private int brickIndex( final int column, final int row )
+  {
+    return row * BRICKS_PER_ROW + column;
   }
 
   private void clearBackground()
