@@ -51,6 +51,8 @@ public class Breakout
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
   private boolean _showBrickCoords = false;
+  private boolean _ballToMouseLeft = false;
+  private boolean _ballToMouseRight = false;
   private double _mouseX;
   private double _mouseY;
 
@@ -99,6 +101,43 @@ public class Breakout
       _showBrickCoords = !_showBrickCoords;
       _showMouseCoords = false;
     }
+    // the 3 key instantly transports ball to mouse and changes direction to left direction
+    else if ( "3".equals( event.key ) )
+    {
+      _ballX = _mouseX;
+      _ballY = _mouseY;
+      _ballSpeedX = 4D;
+      _ballSpeedY = -4D;
+    }
+    // the 4 key instantly transports ball to mouse and changes direction to right direction
+    else if ( "4".equals( event.key ) )
+    {
+      _ballX = _mouseX;
+      _ballY = _mouseY;
+      _ballSpeedX = -4D;
+      _ballSpeedY = -4D;
+    }
+    // the 5 key transports ball to mouse when the mouse moves and changes direction to left direction
+    // the control is a toggle
+    else if ( "5".equals( event.key ) )
+    {
+      _ballToMouseLeft = !_ballToMouseLeft;
+      if ( _ballToMouseLeft )
+      {
+        _ballToMouseRight = false;
+      }
+    }
+    // the 6 key transports ball to mouse when the mouse moves and changes direction to left direction
+    // the control is a toggle
+    else if ( "6".equals( event.key ) )
+    {
+      _ballToMouseRight = !_ballToMouseRight;
+      if ( _ballToMouseRight )
+      {
+        _ballToMouseLeft = false;
+      }
+    }
+
   }
 
   @SuppressWarnings( { "unused" } )
@@ -115,6 +154,21 @@ public class Breakout
 
     // Our pointer should be center of paddle and the paddle can not go outside bounds
     _paddlePositionX = limitPaddleToScreen( _mouseX - HALF_PADDLE_WIDTH );
+
+    if ( _ballToMouseLeft )
+    {
+      _ballX = _mouseX;
+      _ballY = _mouseY;
+      _ballSpeedX = -4D;
+      _ballSpeedY = -4D;
+    }
+    else if ( _ballToMouseRight )
+    {
+      _ballX = _mouseX;
+      _ballY = _mouseY;
+      _ballSpeedX = 4D;
+      _ballSpeedY = -4D;
+    }
   }
 
   // Make sure paddle never goes off screen
