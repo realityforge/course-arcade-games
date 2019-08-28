@@ -209,7 +209,7 @@ public class Breakout
       final double brickRow = ( _mouseY - SPACE_ABOVE_BRICKS ) / BRICK_HEIGHT;
       if ( brickRow > 0 && brickRow < BRICK_ROWS )
       {
-        drawText( _mouseX, _mouseY, brickCol + "," + brickRow, "yellow" );
+        drawText( _mouseX, _mouseY, Math.floor( brickCol ) + "," + Math.floor( brickRow ), "yellow" );
       }
     }
   }
