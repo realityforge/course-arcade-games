@@ -161,7 +161,11 @@ public class Breakout
     final int ballBrickRow = toBrickRow( _ballY );
     if ( isValidBrickCoordinates( ballBrickCol, ballBrickRow ) )
     {
-      brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] = false;
+      if ( brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] )
+      {
+        brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] = false;
+        _ballSpeedY = -_ballSpeedY;
+      }
     }
     final double paddleTopY = _canvas.height - PADDLE_Y_INSET;
     final double paddleBottomY = paddleTopY + PADDLE_HEIGHT;
