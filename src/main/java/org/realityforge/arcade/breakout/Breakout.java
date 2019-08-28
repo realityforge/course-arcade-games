@@ -6,6 +6,7 @@ import elemental2.dom.DOMRect;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.HTMLHtmlElement;
+import elemental2.dom.KeyboardEvent;
 import elemental2.dom.MouseEvent;
 import javax.annotation.Nonnull;
 import jsinterop.base.Js;
@@ -50,10 +51,18 @@ public class Breakout
     ballReset();
 
     _canvas.addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
-    DomGlobal.document.addEventListener( "keydown", e -> _simulationActive = !_simulationActive );
+    DomGlobal.document.addEventListener( "keydown", e -> onKeyPress( (KeyboardEvent) e ) );
 
     runFrame();
     DomGlobal.setInterval( v -> runFrame(), FRAME_DELAY );
+  }
+
+  private void onKeyPress( @Nonnull final KeyboardEvent event )
+  {
+    if ( " ".equals( event.key ) )
+    {
+      _simulationActive = !_simulationActive;
+    }
   }
 
   @SuppressWarnings( { "unused" } )
