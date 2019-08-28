@@ -205,13 +205,23 @@ public class Breakout
     }
     else if ( _showBrickCoords )
     {
-      final double brickCol = _mouseX / BRICK_WIDTH;
-      final double brickRow = ( _mouseY - SPACE_ABOVE_BRICKS ) / BRICK_HEIGHT;
+      final double brickCol = toBrickColumn( _mouseX );
+      final double brickRow = toBrickRow( _mouseY );
       if ( brickRow > 0 && brickRow < BRICK_ROWS )
       {
         drawText( _mouseX, _mouseY, Math.floor( brickCol ) + "," + Math.floor( brickRow ), "yellow" );
       }
     }
+  }
+
+  private double toBrickRow( final double mouseY )
+  {
+    return ( mouseY - SPACE_ABOVE_BRICKS ) / BRICK_HEIGHT;
+  }
+
+  private double toBrickColumn( final double x )
+  {
+    return x / BRICK_WIDTH;
   }
 
   private void drawBricks()
