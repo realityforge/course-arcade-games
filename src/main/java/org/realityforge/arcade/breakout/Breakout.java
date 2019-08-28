@@ -39,6 +39,9 @@ public class Breakout
   private double _ballSpeedY;
   private double _paddlePositionX;
   private boolean _simulationActive = true;
+  private boolean _showMouseCoords = true;
+  private double _mouseX;
+  private double _mouseY;
 
   @Override
   public void onModuleLoad()
@@ -63,6 +66,11 @@ public class Breakout
     {
       _simulationActive = !_simulationActive;
     }
+    // the 1 key turns on debugging of mouse coordinates
+    else if ( "1".equals( event.key ) )
+    {
+      _showMouseCoords = !_showMouseCoords;
+    }
   }
 
   @SuppressWarnings( { "unused" } )
@@ -74,11 +82,11 @@ public class Breakout
     // The clientX/clientY properties are the coordinates relative to the client area of the mouse
     // pointer when a mouse event was triggered.. The client area is the current window.
     // Thus translating it according to component and scrolling will get coordinate within component.
-    final double mouseX = event.clientX - rect.x - root.scrollLeft;
-    final double mouseY = event.clientY - rect.top - root.scrollTop;
+    _mouseX = event.clientX - rect.x - root.scrollLeft;
+    _mouseY = event.clientY - rect.top - root.scrollTop;
 
     // Our pointer should be center of paddle and the paddle can not go outside bounds
-    _paddlePositionX = limitPaddleToScreen( mouseX - HALF_PADDLE_WIDTH );
+    _paddlePositionX = limitPaddleToScreen( _mouseX - HALF_PADDLE_WIDTH );
   }
 
   // Make sure paddle never goes off screen
@@ -165,11 +173,26 @@ public class Breakout
 
     // Ball
     drawCircle( _ballX, _ballY, BALL_RADIUS, "red" );
+
+    if ( _showMouseCoords )
+    {
+      drawText( _mouseX, _mouseY, _mouseX + "," + _mouseY, "yellow" );
+    }
   }
 
   private void clearBackground()
   {
     drawRect( 0D, 0D, _canvas.width, _canvas.height, "black" );
+  }
+
+  @SuppressWarnings( "SameParameterValue" )
+  private void drawText( final double bottomLeftX,
+                         final double bottomLeftY,
+                         @Nonnull final String text,
+                         @Nonnull final String color )
+  {
+    _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( color );
+    _context.fillText( text, bottomLeftX, bottomLeftY );
   }
 
   @SuppressWarnings( "SameParameterValue" )
