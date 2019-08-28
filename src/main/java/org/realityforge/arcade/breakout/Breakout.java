@@ -240,7 +240,34 @@ public class Breakout
       if ( brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] )
       {
         brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] = false;
-        _ballSpeedY = -_ballSpeedY;
+
+        final int prevBallBrickCol = toBrickColumn( _ballX - _ballSpeedX );
+        final int prevBallBrickRow = toBrickRow( _ballY - _ballSpeedY );
+        if ( prevBallBrickCol != ballBrickCol )
+        {
+
+          if (
+            // Don't reflect if we hit a horizontal surface
+            !brickGrid[ brickIndex( prevBallBrickCol, ballBrickRow ) ] ||
+
+            // This next condition handles the scenario where hit inside corner where we still want to reverse
+            brickGrid[ brickIndex( ballBrickCol, prevBallBrickRow ) ] )
+          {
+            _ballSpeedX = -_ballSpeedX;
+          }
+        }
+        if ( prevBallBrickRow != ballBrickRow )
+        {
+          if (
+            // Don't reflect if we hit a vertical surface
+            !brickGrid[ brickIndex( ballBrickCol, prevBallBrickRow ) ] ||
+
+            // This next condition handles the scenario where hit inside corner where we still want to reverse
+            brickGrid[ brickIndex( prevBallBrickCol, ballBrickRow ) ] )
+          {
+            _ballSpeedY = -_ballSpeedY;
+          }
+        }
       }
     }
   }
