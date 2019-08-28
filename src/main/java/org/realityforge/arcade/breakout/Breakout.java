@@ -8,6 +8,7 @@ import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.HTMLHtmlElement;
 import elemental2.dom.KeyboardEvent;
 import elemental2.dom.MouseEvent;
+import java.util.Arrays;
 import javax.annotation.Nonnull;
 import jsinterop.base.Js;
 
@@ -31,6 +32,13 @@ public class Breakout
   private static final double HORIZONTAL_REFLECT_FORCE_TRANSFER = ( 2 * MAX_REFLECT_SPEED ) / PADDLE_WIDTH;
   // The amount that the paddle is inset from the bottom of the screen
   private static final double PADDLE_Y_INSET = 50D;
+  private static final double BRICK_WIDTH = 100D;
+  private static final double BRICK_HEIGHT = 40D;
+  private static final double BRICK_GAP = 2D;
+  private static final double SPACE_ABOVE_BRICKS = BRICK_HEIGHT;
+  private static final int BRICKS_PER_ROW = 8;
+  private static final int BRICK_ROWS = 2;
+  private static final boolean[] brickGrid = new boolean[ BRICKS_PER_ROW * BRICK_ROWS ];
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
   private double _ballX;
@@ -39,7 +47,7 @@ public class Breakout
   private double _ballSpeedY;
   private double _paddlePositionX;
   private boolean _simulationActive = true;
-  private boolean _showMouseCoords = true;
+  private boolean _showMouseCoords = false;
   private double _mouseX;
   private double _mouseY;
 
@@ -56,8 +64,15 @@ public class Breakout
     _canvas.addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
     DomGlobal.document.addEventListener( "keydown", e -> onKeyPress( (KeyboardEvent) e ) );
 
+    resetBricks();
+
     runFrame();
     DomGlobal.setInterval( v -> runFrame(), FRAME_DELAY );
+  }
+
+  private void resetBricks()
+  {
+    Arrays.fill( brickGrid, true );
   }
 
   private void onKeyPress( @Nonnull final KeyboardEvent event )
@@ -171,12 +186,29 @@ public class Breakout
     // Player Paddle
     drawRect( _paddlePositionX, _canvas.height - PADDLE_Y_INSET, PADDLE_WIDTH, PADDLE_HEIGHT, "white" );
 
+    drawBricks();
+
     // Ball
     drawCircle( _ballX, _ballY, BALL_RADIUS, "red" );
 
     if ( _showMouseCoords )
     {
       drawText( _mouseX, _mouseY, _mouseX + "," + _mouseY, "yellow" );
+    }
+  }
+
+  private void drawBricks()
+  {
+    for ( int i = 0; i < BRICK_ROWS; i++ )
+    {
+      final double rowY = SPACE_ABOVE_BRICKS + i * BRICK_HEIGHT;
+      for ( int j = 0; j < BRICKS_PER_ROW; j++ )
+      {
+        if ( brickGrid[ i * BRICKS_PER_ROW + j ] )
+        {
+          drawRect( BRICK_WIDTH * j, rowY, BRICK_WIDTH - BRICK_GAP, BRICK_HEIGHT - BRICK_GAP, "blue" );
+        }
+      }
     }
   }
 
