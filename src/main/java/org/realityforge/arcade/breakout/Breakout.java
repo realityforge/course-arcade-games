@@ -207,11 +207,16 @@ public class Breakout
     {
       final double brickCol = toBrickColumn( _mouseX );
       final double brickRow = toBrickRow( _mouseY );
-      if ( brickRow > 0 && brickRow < BRICK_ROWS )
+      if ( isValidBrickCoordinates( brickCol, brickRow ) )
       {
         drawText( _mouseX, _mouseY, Math.floor( brickCol ) + "," + Math.floor( brickRow ), "yellow" );
       }
     }
+  }
+
+  private boolean isValidBrickCoordinates( final double brickCol, final double brickRow )
+  {
+    return brickCol > 0 && brickCol < BRICKS_PER_ROW && brickRow > 0 && brickRow < BRICK_ROWS;
   }
 
   private double toBrickRow( final double mouseY )
