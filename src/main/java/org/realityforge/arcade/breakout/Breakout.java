@@ -48,6 +48,7 @@ public class Breakout
   private double _paddlePositionX;
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
+  private boolean _showBrickCoords = false;
   private double _mouseX;
   private double _mouseY;
 
@@ -85,6 +86,13 @@ public class Breakout
     else if ( "1".equals( event.key ) )
     {
       _showMouseCoords = !_showMouseCoords;
+      _showBrickCoords = false;
+    }
+    // the 2 key turns on debugging in brick coordinates
+    else if ( "2".equals( event.key ) )
+    {
+      _showBrickCoords = !_showBrickCoords;
+      _showMouseCoords = false;
     }
   }
 
@@ -194,6 +202,15 @@ public class Breakout
     if ( _showMouseCoords )
     {
       drawText( _mouseX, _mouseY, _mouseX + "," + _mouseY, "yellow" );
+    }
+    else if ( _showBrickCoords )
+    {
+      final double brickCol = _mouseX / BRICK_WIDTH;
+      final double brickRow = ( _mouseY - SPACE_ABOVE_BRICKS ) / BRICK_HEIGHT;
+      if ( brickRow > 0 && brickRow < BRICK_ROWS )
+      {
+        drawText( _mouseX, _mouseY, brickCol + "," + brickRow, "yellow" );
+      }
     }
   }
 
