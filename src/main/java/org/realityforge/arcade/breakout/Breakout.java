@@ -17,6 +17,12 @@ public class Breakout
 {
   private static final int WORLD_WIDTH = 800;
   private static final int WORLD_HEIGHT = 600;
+  private static final int BRICKS_PER_ROW = 8;
+  private static final int BRICK_ROWS = 10;
+  private static final double BRICK_WIDTH = WORLD_WIDTH * 1D / BRICKS_PER_ROW;
+  private static final double BRICK_HEIGHT = 40D;
+  private static final double BRICK_GAP = 2D;
+  private static final double SPACE_ABOVE_BRICKS = BRICK_HEIGHT;
   private static final int FRAMES_PER_SECOND = 30;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
@@ -34,12 +40,6 @@ public class Breakout
   private static final double HORIZONTAL_REFLECT_FORCE_TRANSFER = ( 2 * MAX_REFLECT_SPEED ) / PADDLE_WIDTH;
   // The amount that the paddle is inset from the bottom of the screen
   private static final double PADDLE_Y_INSET = 50D;
-  private static final double BRICK_WIDTH = 100D;
-  private static final double BRICK_HEIGHT = 40D;
-  private static final double BRICK_GAP = 2D;
-  private static final double SPACE_ABOVE_BRICKS = BRICK_HEIGHT;
-  private static final int BRICKS_PER_ROW = 8;
-  private static final int BRICK_ROWS = 2;
   private static final boolean[] brickGrid = new boolean[ BRICKS_PER_ROW * BRICK_ROWS ];
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
@@ -157,7 +157,12 @@ public class Breakout
     {
       _ballSpeedX = -_ballSpeedX;
     }
-
+    final int ballBrickCol = toBrickColumn( _ballX );
+    final int ballBrickRow = toBrickRow( _ballY );
+    if ( isValidBrickCoordinates( ballBrickCol, ballBrickRow ) )
+    {
+      brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] = false;
+    }
     final double paddleTopY = _canvas.height - PADDLE_Y_INSET;
     final double paddleBottomY = paddleTopY + PADDLE_HEIGHT;
     final double paddleLeftX = _paddlePositionX;
@@ -221,17 +226,17 @@ public class Breakout
 
   private boolean isValidBrickCoordinates( final double brickCol, final double brickRow )
   {
-    return brickCol > 0 && brickCol < BRICKS_PER_ROW && brickRow > 0 && brickRow < BRICK_ROWS;
+    return brickCol >= 0 && brickCol < BRICKS_PER_ROW && brickRow >= 0 && brickRow < BRICK_ROWS;
   }
 
-  private double toBrickRow( final double mouseY )
+  private int toBrickRow( final double mouseY )
   {
-    return ( mouseY - SPACE_ABOVE_BRICKS ) / BRICK_HEIGHT;
+    return (int) Math.floor( ( mouseY - SPACE_ABOVE_BRICKS ) / BRICK_HEIGHT );
   }
 
-  private double toBrickColumn( final double x )
+  private int toBrickColumn( final double x )
   {
-    return x / BRICK_WIDTH;
+    return (int) Math.floor( x / BRICK_WIDTH );
   }
 
   private void drawBricks()
