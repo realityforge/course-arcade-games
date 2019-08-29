@@ -17,12 +17,12 @@ public class Racing
 {
   private static final int WORLD_WIDTH = 800;
   private static final int WORLD_HEIGHT = 600;
-  private static final int BRICKS_PER_ROW = 8;
-  private static final int BRICK_ROWS = 14;
-  private static final double BRICK_WIDTH = WORLD_WIDTH * 1D / BRICKS_PER_ROW;
-  private static final double BRICK_HEIGHT = 20D;
-  private static final double BRICK_GAP = 2D;
-  private static final double SPACE_ABOVE_BRICKS = BRICK_HEIGHT * 3;
+  private static final int TRACKS_PER_ROW = 8;
+  private static final int TRACK_ROWS = 14;
+  private static final double TRACK_WIDTH = WORLD_WIDTH * 1D / TRACKS_PER_ROW;
+  private static final double TRACK_HEIGHT = 20D;
+  private static final double TRACK_GAP = 2D;
+  private static final double SPACE_ABOVE_TRACKS = TRACK_HEIGHT * 3;
   private static final int FRAMES_PER_SECOND = 30;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
@@ -31,7 +31,7 @@ public class Racing
   private static final double MIN_INITIAL_X_SPEED = 0.5D;
   private static final double MAX_INITIAL_Y_SPEED = 12D;
   private static final double MIN_INITIAL_Y_SPEED = 7D;
-  private static final boolean[] brickGrid = new boolean[ BRICKS_PER_ROW * BRICK_ROWS ];
+  private static final boolean[] trackGrid = new boolean[ TRACKS_PER_ROW * TRACK_ROWS ];
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
   private double _ballX;
@@ -40,7 +40,7 @@ public class Racing
   private double _ballSpeedY;
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
-  private boolean _showBrickCoords = false;
+  private boolean _showTrackCoords = false;
   private boolean _ballToMouseLeft = false;
   private boolean _ballToMouseRight = false;
   private double _mouseX;
@@ -64,9 +64,9 @@ public class Racing
     DomGlobal.setInterval( v -> runFrame(), FRAME_DELAY );
   }
 
-  private void resetBricks()
+  private void resetTracks()
   {
-    Arrays.fill( brickGrid, true );
+    Arrays.fill( trackGrid, true );
   }
 
   private void onKeyPress( @Nonnull final KeyboardEvent event )
@@ -79,12 +79,12 @@ public class Racing
     else if ( "1".equals( event.key ) )
     {
       _showMouseCoords = !_showMouseCoords;
-      _showBrickCoords = false;
+      _showTrackCoords = false;
     }
-    // the 2 key turns on debugging in brick coordinates
+    // the 2 key turns on debugging in track coordinates
     else if ( "2".equals( event.key ) )
     {
-      _showBrickCoords = !_showBrickCoords;
+      _showTrackCoords = !_showTrackCoords;
       _showMouseCoords = false;
     }
     // the 3 key instantly transports ball to mouse and changes direction to left direction
@@ -166,7 +166,7 @@ public class Racing
   {
     moveBall();
 
-    ballBrickCollisionDetection();
+    ballTrackCollisionDetection();
   }
 
   private void moveBall()
@@ -223,41 +223,41 @@ public class Racing
     _ballSpeedY = randomValue( MIN_INITIAL_Y_SPEED, MAX_INITIAL_Y_SPEED );
 
     _ballX = _canvas.width / 2D;
-    _ballY = ( BRICK_HEIGHT * BRICK_ROWS ) + SPACE_ABOVE_BRICKS + BRICK_HEIGHT;
+    _ballY = ( TRACK_HEIGHT * TRACK_ROWS ) + SPACE_ABOVE_TRACKS + TRACK_HEIGHT;
   }
 
-  private void ballBrickCollisionDetection()
+  private void ballTrackCollisionDetection()
   {
-    final int ballBrickCol = toBrickColumn( _ballX );
-    final int ballBrickRow = toBrickRow( _ballY );
-    if ( isValidBrickCoordinates( ballBrickCol, ballBrickRow ) )
+    final int ballTrackCol = toTrackColumn( _ballX );
+    final int ballTrackRow = toTrackRow( _ballY );
+    if ( isValidTrackCoordinates( ballTrackCol, ballTrackRow ) )
     {
-      if ( brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] )
+      if ( trackGrid[ trackIndex( ballTrackCol, ballTrackRow ) ] )
       {
-        brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] = false;
+        trackGrid[ trackIndex( ballTrackCol, ballTrackRow ) ] = false;
 
-        final int prevBallBrickCol = toBrickColumn( _ballX - _ballSpeedX );
-        final int prevBallBrickRow = toBrickRow( _ballY - _ballSpeedY );
-        if ( prevBallBrickCol != ballBrickCol )
+        final int prevBallTrackCol = toTrackColumn( _ballX - _ballSpeedX );
+        final int prevBallTrackRow = toTrackRow( _ballY - _ballSpeedY );
+        if ( prevBallTrackCol != ballTrackCol )
         {
           if (
             // Don't reflect if we hit a horizontal surface
-            !brickGrid[ brickIndex( prevBallBrickCol, ballBrickRow ) ] ||
+            !trackGrid[ trackIndex( prevBallTrackCol, ballTrackRow ) ] ||
 
             // This next condition handles the scenario where hit inside corner where we still want to reverse
-            brickGrid[ brickIndex( ballBrickCol, prevBallBrickRow ) ] )
+            trackGrid[ trackIndex( ballTrackCol, prevBallTrackRow ) ] )
           {
             _ballSpeedX = -_ballSpeedX;
           }
         }
-        if ( prevBallBrickRow != ballBrickRow )
+        if ( prevBallTrackRow != ballTrackRow )
         {
           if (
             // Don't reflect if we hit a vertical surface
-            !brickGrid[ brickIndex( ballBrickCol, prevBallBrickRow ) ] ||
+            !trackGrid[ trackIndex( ballTrackCol, prevBallTrackRow ) ] ||
 
             // This next condition handles the scenario where hit inside corner where we still want to reverse
-            brickGrid[ brickIndex( prevBallBrickCol, ballBrickRow ) ] )
+            trackGrid[ trackIndex( prevBallTrackCol, ballTrackRow ) ] )
           {
             _ballSpeedY = -_ballSpeedY;
           }
@@ -268,7 +268,7 @@ public class Racing
 
   private void resetGame()
   {
-    resetBricks();
+    resetTracks();
     ballReset();
   }
 
@@ -282,7 +282,7 @@ public class Racing
     // Background
     clearBackground();
 
-    drawBricks();
+    drawTracks();
 
     // Ball
     drawCircle( _ballX, _ballY, BALL_RADIUS, "red" );
@@ -291,50 +291,50 @@ public class Racing
     {
       drawText( _mouseX, _mouseY, _mouseX + "," + _mouseY, "yellow" );
     }
-    else if ( _showBrickCoords )
+    else if ( _showTrackCoords )
     {
-      final double brickCol = toBrickColumn( _mouseX );
-      final double brickRow = toBrickRow( _mouseY );
-      if ( isValidBrickCoordinates( brickCol, brickRow ) )
+      final double trackCol = toTrackColumn( _mouseX );
+      final double trackRow = toTrackRow( _mouseY );
+      if ( isValidTrackCoordinates( trackCol, trackRow ) )
       {
-        drawText( _mouseX, _mouseY, Math.floor( brickCol ) + "," + Math.floor( brickRow ), "yellow" );
+        drawText( _mouseX, _mouseY, Math.floor( trackCol ) + "," + Math.floor( trackRow ), "yellow" );
       }
     }
   }
 
-  private boolean isValidBrickCoordinates( final double brickCol, final double brickRow )
+  private boolean isValidTrackCoordinates( final double trackCol, final double trackRow )
   {
-    return brickCol >= 0 && brickCol < BRICKS_PER_ROW && brickRow >= 0 && brickRow < BRICK_ROWS;
+    return trackCol >= 0 && trackCol < TRACKS_PER_ROW && trackRow >= 0 && trackRow < TRACK_ROWS;
   }
 
-  private int toBrickRow( final double mouseY )
+  private int toTrackRow( final double mouseY )
   {
-    return (int) Math.floor( ( mouseY - SPACE_ABOVE_BRICKS ) / BRICK_HEIGHT );
+    return (int) Math.floor( ( mouseY - SPACE_ABOVE_TRACKS ) / TRACK_HEIGHT );
   }
 
-  private int toBrickColumn( final double x )
+  private int toTrackColumn( final double x )
   {
-    return (int) Math.floor( x / BRICK_WIDTH );
+    return (int) Math.floor( x / TRACK_WIDTH );
   }
 
-  private void drawBricks()
+  private void drawTracks()
   {
-    for ( int i = 0; i < BRICK_ROWS; i++ )
+    for ( int i = 0; i < TRACK_ROWS; i++ )
     {
-      final double rowY = SPACE_ABOVE_BRICKS + i * BRICK_HEIGHT;
-      for ( int j = 0; j < BRICKS_PER_ROW; j++ )
+      final double rowY = SPACE_ABOVE_TRACKS + i * TRACK_HEIGHT;
+      for ( int j = 0; j < TRACKS_PER_ROW; j++ )
       {
-        if ( brickGrid[ brickIndex( j, i ) ] )
+        if ( trackGrid[ trackIndex( j, i ) ] )
         {
-          drawRect( BRICK_WIDTH * j, rowY, BRICK_WIDTH - BRICK_GAP, BRICK_HEIGHT - BRICK_GAP, "blue" );
+          drawRect( TRACK_WIDTH * j, rowY, TRACK_WIDTH - TRACK_GAP, TRACK_HEIGHT - TRACK_GAP, "blue" );
         }
       }
     }
   }
 
-  private int brickIndex( final int column, final int row )
+  private int trackIndex( final int column, final int row )
   {
-    return row * BRICKS_PER_ROW + column;
+    return row * TRACKS_PER_ROW + column;
   }
 
   private void clearBackground()
