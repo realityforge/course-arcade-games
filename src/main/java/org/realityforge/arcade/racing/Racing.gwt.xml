@@ -1,0 +1,8 @@
+<module rename-to='racing'>
+  <inherits name='org.realityforge.arcade.Arcade'/>
+
+  <entry-point class='org.realityforge.arcade.racing.Racing'/>
+
+  <source path=''/>
+  <public path='public'/>
+</module>
