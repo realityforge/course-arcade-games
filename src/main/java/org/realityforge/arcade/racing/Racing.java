@@ -184,7 +184,7 @@ public class Racing
     {
       // Ensure that if the ball is coming down because it has somehow got above
       // the world then let it continue coming down
-      if ( _ballSpeedX < 0 )
+      if ( _ballSpeedY < 0 )
       {
         _ballSpeedY = -_ballSpeedY;
       }
