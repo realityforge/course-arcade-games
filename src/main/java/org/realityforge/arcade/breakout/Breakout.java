@@ -18,11 +18,11 @@ public class Breakout
   private static final int WORLD_WIDTH = 800;
   private static final int WORLD_HEIGHT = 600;
   private static final int BRICKS_PER_ROW = 8;
-  private static final int BRICK_ROWS = 10;
+  private static final int BRICK_ROWS = 14;
   private static final double BRICK_WIDTH = WORLD_WIDTH * 1D / BRICKS_PER_ROW;
-  private static final double BRICK_HEIGHT = 40D;
+  private static final double BRICK_HEIGHT = 20D;
   private static final double BRICK_GAP = 2D;
-  private static final double SPACE_ABOVE_BRICKS = BRICK_HEIGHT;
+  private static final double SPACE_ABOVE_BRICKS = BRICK_HEIGHT * 3;
   private static final int FRAMES_PER_SECOND = 30;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
