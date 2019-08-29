@@ -27,28 +27,17 @@ public class Racing
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
   private static final double BALL_RADIUS = 10D;
-  private static final double PADDLE_HEIGHT = 10D;
-  private static final double PADDLE_WIDTH = 100D;
-  private static final double HALF_PADDLE_WIDTH = PADDLE_WIDTH / 2;
   private static final double MAX_INITIAL_X_SPEED = 8D;
   private static final double MIN_INITIAL_X_SPEED = 0.5D;
   private static final double MAX_INITIAL_Y_SPEED = 12D;
   private static final double MIN_INITIAL_Y_SPEED = 7D;
-  private static final double MAX_REFLECT_SPEED = 12.5D;
-  // This is multiplied by the distance from the center of the paddle. So maximum force is transfered when you
-  // ht the edges of the paddle while hitting the center of the paddle results in almost vertical reflection
-  private static final double HORIZONTAL_REFLECT_FORCE_TRANSFER = ( 2 * MAX_REFLECT_SPEED ) / PADDLE_WIDTH;
-  // The amount that the paddle is inset from the bottom of the screen
-  private static final double PADDLE_Y_INSET = 50D;
   private static final boolean[] brickGrid = new boolean[ BRICKS_PER_ROW * BRICK_ROWS ];
-  private static int _bricksLeft;
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
   private double _ballX;
   private double _ballY;
   private double _ballSpeedX;
   private double _ballSpeedY;
-  private double _paddlePositionX;
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
   private boolean _showBrickCoords = false;
@@ -66,9 +55,6 @@ public class Racing
     DomGlobal.document.documentElement.appendChild( _canvas );
     _context = Js.uncheckedCast( _canvas.getContext( "2d" ) );
 
-    // Center paddle
-    _paddlePositionX = _canvas.width / 2D - ( PADDLE_WIDTH / 2D );
-
     _canvas.addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
     DomGlobal.document.addEventListener( "keydown", e -> onKeyPress( (KeyboardEvent) e ) );
 
@@ -80,7 +66,6 @@ public class Racing
 
   private void resetBricks()
   {
-    _bricksLeft = brickGrid.length;
     Arrays.fill( brickGrid, true );
   }
 
@@ -152,9 +137,6 @@ public class Racing
     _mouseX = event.clientX - rect.x - root.scrollLeft;
     _mouseY = event.clientY - rect.top - root.scrollTop;
 
-    // Our pointer should be center of paddle and the paddle can not go outside bounds
-    _paddlePositionX = limitPaddleToScreen( _mouseX - HALF_PADDLE_WIDTH );
-
     if ( _ballToMouseLeft )
     {
       _ballX = _mouseX;
@@ -171,12 +153,6 @@ public class Racing
     }
   }
 
-  // Make sure paddle never goes off screen
-  private double limitPaddleToScreen( final double paddlePosition )
-  {
-    return Math.min( Math.max( 0, paddlePosition ), _canvas.width - PADDLE_WIDTH );
-  }
-
   private void runFrame()
   {
     if ( _simulationActive )
@@ -191,8 +167,6 @@ public class Racing
     moveBall();
 
     ballBrickCollisionDetection();
-
-    ballPaddleColisionDetection();
   }
 
   private void moveBall()
@@ -261,7 +235,6 @@ public class Racing
       if ( brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] )
       {
         brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] = false;
-        _bricksLeft--;
 
         final int prevBallBrickCol = toBrickColumn( _ballX - _ballSpeedX );
         final int prevBallBrickRow = toBrickRow( _ballY - _ballSpeedY );
@@ -293,41 +266,6 @@ public class Racing
     }
   }
 
-  private void ballPaddleColisionDetection()
-  {
-    final double ballTopY = _ballY - BALL_RADIUS;
-    final double ballBottomY = _ballY + BALL_RADIUS;
-    final double ballLeftX = _ballX - BALL_RADIUS;
-    final double ballRightX = _ballX + BALL_RADIUS;
-
-    final double paddleTopY = _canvas.height - PADDLE_Y_INSET;
-    final double paddleBottomY = paddleTopY + PADDLE_HEIGHT;
-    final double paddleLeftX = _paddlePositionX;
-    final double paddleRightX = _paddlePositionX + PADDLE_WIDTH;
-
-    if ( ballRightX > paddleLeftX &&
-         ballLeftX < paddleRightX &&
-         ballTopY < paddleBottomY &&
-         ballBottomY > paddleTopY )
-    {
-      // If we have emptied out all the blocks then the next time it bounces off the paddle the game is won
-      // and the board is reset
-      if ( 0 == _bricksLeft )
-      {
-        resetGame();
-      }
-      else
-      {
-        _ballSpeedY = -_ballSpeedY;
-
-        // This gives ball control as in Tennis game
-        final double paddleCenter = _paddlePositionX + HALF_PADDLE_WIDTH;
-        final double ballDistanceFromPaddleCenter = _ballX - paddleCenter;
-        _ballSpeedX = ballDistanceFromPaddleCenter * HORIZONTAL_REFLECT_FORCE_TRANSFER;
-      }
-    }
-  }
-
   private void resetGame()
   {
     resetBricks();
@@ -343,9 +281,6 @@ public class Racing
   {
     // Background
     clearBackground();
-
-    // Player Paddle
-    drawRect( _paddlePositionX, _canvas.height - PADDLE_Y_INSET, PADDLE_WIDTH, PADDLE_HEIGHT, "white" );
 
     drawBricks();
 
