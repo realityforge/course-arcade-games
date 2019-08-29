@@ -208,7 +208,12 @@ public class Breakout
     // Bounce off the top edge
     if ( ballTopY < 0 )
     {
-      _ballSpeedY = -_ballSpeedY;
+      // Ensure that if the ball is coming down because it has somehow got above
+      // the world then let it continue coming down
+      if ( _ballSpeedX < 0 )
+      {
+        _ballSpeedY = -_ballSpeedY;
+      }
     }
     // Reset game if missed and ball falls off the bottom edge
     else if ( ballBottomY > _canvas.height )
@@ -216,9 +221,25 @@ public class Breakout
       resetGame();
     }
     // Bounce off the side edges
-    else if ( ballRightX > _canvas.width || ballLeftX < 0 )
+    else if ( ballRightX > _canvas.width )
     {
-      _ballSpeedX = -_ballSpeedX;
+      // If the ball is outside the world coming in then let
+      // it, otherwise reverse it back towards the world.
+      // Sometimes the paddle will jump it outside the world
+      if ( _ballSpeedX > 0 )
+      {
+        _ballSpeedX = -_ballSpeedX;
+      }
+    }
+    else if ( ballLeftX < 0 )
+    {
+      // If the ball is outside the world coming in then let
+      // it, otherwise reverse it back towards the world.
+      // Sometimes the paddle will jump it outside the world
+      if ( _ballSpeedX < 0 )
+      {
+        _ballSpeedX = -_ballSpeedX;
+      }
     }
   }
 
