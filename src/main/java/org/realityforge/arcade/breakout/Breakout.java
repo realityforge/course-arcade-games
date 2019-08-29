@@ -41,6 +41,7 @@ public class Breakout
   // The amount that the paddle is inset from the bottom of the screen
   private static final double PADDLE_Y_INSET = 50D;
   private static final boolean[] brickGrid = new boolean[ BRICKS_PER_ROW * BRICK_ROWS ];
+  private static int _bricksLeft;
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
   private double _ballX;
@@ -79,6 +80,7 @@ public class Breakout
 
   private void resetBricks()
   {
+    _bricksLeft = brickGrid.length;
     Arrays.fill( brickGrid, true );
   }
 
@@ -239,6 +241,7 @@ public class Breakout
       if ( brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] )
       {
         brickGrid[ brickIndex( ballBrickCol, ballBrickRow ) ] = false;
+        _bricksLeft--;
 
         final int prevBallBrickCol = toBrickColumn( _ballX - _ballSpeedX );
         final int prevBallBrickRow = toBrickRow( _ballY - _ballSpeedY );
@@ -287,12 +290,21 @@ public class Breakout
          ballTopY < paddleBottomY &&
          ballBottomY > paddleTopY )
     {
-      _ballSpeedY = -_ballSpeedY;
+      // If we have emptied out all the blocks then the next time it bounces off the paddle the game is won
+      // and the board is reset
+      if ( 0 == _bricksLeft )
+      {
+        resetGame();
+      }
+      else
+      {
+        _ballSpeedY = -_ballSpeedY;
 
-      // This gives ball control as in Tennis game
-      final double paddleCenter = _paddlePositionX + HALF_PADDLE_WIDTH;
-      final double ballDistanceFromPaddleCenter = _ballX - paddleCenter;
-      _ballSpeedX = ballDistanceFromPaddleCenter * HORIZONTAL_REFLECT_FORCE_TRANSFER;
+        // This gives ball control as in Tennis game
+        final double paddleCenter = _paddlePositionX + HALF_PADDLE_WIDTH;
+        final double ballDistanceFromPaddleCenter = _ballX - paddleCenter;
+        _ballSpeedX = ballDistanceFromPaddleCenter * HORIZONTAL_REFLECT_FORCE_TRANSFER;
+      }
     }
   }
 
