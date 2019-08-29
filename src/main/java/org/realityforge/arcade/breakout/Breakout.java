@@ -209,10 +209,10 @@ public class Breakout
     {
       _ballSpeedY = -_ballSpeedY;
     }
-    // Reset ball if off the bottom edge
+    // Reset game if missed and ball falls off the bottom edge
     else if ( ballBottomY > _canvas.height )
     {
-      ballReset();
+      resetGame();
     }
     // Bounce off the side edges
     else if ( ballRightX > _canvas.width || ballLeftX < 0 )
