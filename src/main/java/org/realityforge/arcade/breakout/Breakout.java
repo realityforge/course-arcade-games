@@ -227,7 +227,7 @@ public class Breakout
     _ballSpeedY = randomValue( MIN_INITIAL_Y_SPEED, MAX_INITIAL_Y_SPEED );
 
     _ballX = _canvas.width / 2D;
-    _ballY = _canvas.height / 2D;
+    _ballY = ( BRICK_HEIGHT * BRICK_ROWS ) + SPACE_ABOVE_BRICKS + BRICK_HEIGHT;
   }
 
   private void ballBrickCollisionDetection()
