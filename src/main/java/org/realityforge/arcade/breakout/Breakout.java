@@ -245,7 +245,6 @@ public class Breakout
         final int prevBallBrickRow = toBrickRow( _ballY - _ballSpeedY );
         if ( prevBallBrickCol != ballBrickCol )
         {
-
           if (
             // Don't reflect if we hit a horizontal surface
             !brickGrid[ brickIndex( prevBallBrickCol, ballBrickRow ) ] ||
