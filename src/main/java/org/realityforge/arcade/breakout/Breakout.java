@@ -138,7 +138,6 @@ public class Breakout
         _ballToMouseLeft = false;
       }
     }
-
   }
 
   @SuppressWarnings( { "unused" } )
