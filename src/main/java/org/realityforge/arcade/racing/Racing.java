@@ -17,12 +17,11 @@ public class Racing
 {
   private static final int WORLD_WIDTH = 800;
   private static final int WORLD_HEIGHT = 600;
-  private static final int TRACKS_PER_ROW = 8;
-  private static final int TRACK_ROWS = 14;
+  private static final int TRACKS_PER_ROW = 20;
+  private static final int TRACK_ROWS = 15;
   private static final double TRACK_WIDTH = WORLD_WIDTH * 1D / TRACKS_PER_ROW;
-  private static final double TRACK_HEIGHT = 20D;
+  private static final double TRACK_HEIGHT = 40D;
   private static final double TRACK_GAP = 2D;
-  private static final double SPACE_ABOVE_TRACKS = TRACK_HEIGHT * 3;
   private static final int FRAMES_PER_SECOND = 30;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
@@ -223,7 +222,7 @@ public class Racing
     _ballSpeedY = randomValue( MIN_INITIAL_Y_SPEED, MAX_INITIAL_Y_SPEED );
 
     _ballX = _canvas.width / 2D;
-    _ballY = ( TRACK_HEIGHT * TRACK_ROWS ) + SPACE_ABOVE_TRACKS + TRACK_HEIGHT;
+    _ballY = ( TRACK_HEIGHT * TRACK_ROWS ) + TRACK_HEIGHT;
   }
 
   private void ballTrackCollisionDetection()
@@ -309,7 +308,7 @@ public class Racing
 
   private int toTrackRow( final double mouseY )
   {
-    return (int) Math.floor( ( mouseY - SPACE_ABOVE_TRACKS ) / TRACK_HEIGHT );
+    return (int) Math.floor( mouseY / TRACK_HEIGHT );
   }
 
   private int toTrackColumn( final double x )
@@ -321,7 +320,7 @@ public class Racing
   {
     for ( int i = 0; i < TRACK_ROWS; i++ )
     {
-      final double rowY = SPACE_ABOVE_TRACKS + i * TRACK_HEIGHT;
+      final double rowY = i * TRACK_HEIGHT;
       for ( int j = 0; j < TRACKS_PER_ROW; j++ )
       {
         if ( trackGrid[ trackIndex( j, i ) ] )
