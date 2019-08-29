@@ -67,12 +67,11 @@ public class Breakout
 
     // Center paddle
     _paddlePositionX = _canvas.width / 2D - ( PADDLE_WIDTH / 2D );
-    ballReset();
 
     _canvas.addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
     DomGlobal.document.addEventListener( "keydown", e -> onKeyPress( (KeyboardEvent) e ) );
 
-    resetBricks();
+    resetGame();
 
     runFrame();
     DomGlobal.setInterval( v -> runFrame(), FRAME_DELAY );
@@ -295,6 +294,12 @@ public class Breakout
       final double ballDistanceFromPaddleCenter = _ballX - paddleCenter;
       _ballSpeedX = ballDistanceFromPaddleCenter * HORIZONTAL_REFLECT_FORCE_TRANSFER;
     }
+  }
+
+  private void resetGame()
+  {
+    resetBricks();
+    ballReset();
   }
 
   private double randomValue( final double min, final double max )
