@@ -32,8 +32,8 @@ public class Breakout
   private static final double HALF_PADDLE_WIDTH = PADDLE_WIDTH / 2;
   private static final double MAX_INITIAL_X_SPEED = 8D;
   private static final double MIN_INITIAL_X_SPEED = 0.5D;
-  private static final double MAX_INITIAL_Y_SPEED = 8D;
-  private static final double MIN_INITIAL_Y_SPEED = 4D;
+  private static final double MAX_INITIAL_Y_SPEED = 12D;
+  private static final double MIN_INITIAL_Y_SPEED = 7D;
   private static final double MAX_REFLECT_SPEED = 12.5D;
   // This is multiplied by the distance from the center of the paddle. So maximum force is transfered when you
   // ht the edges of the paddle while hitting the center of the paddle results in almost vertical reflection
