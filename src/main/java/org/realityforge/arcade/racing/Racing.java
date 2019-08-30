@@ -25,7 +25,7 @@ public class Racing
   private static final int FRAMES_PER_SECOND = 30;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
-  private static final double BALL_RADIUS = 10D;
+  private static final double CAR_RADIUS = 10D;
   private static final double MAX_INITIAL_X_SPEED = 8D;
   private static final double MIN_INITIAL_X_SPEED = 0.5D;
   private static final double MAX_INITIAL_Y_SPEED = 12D;
@@ -55,15 +55,15 @@ public class Racing
   private CanvasRenderingContext2D _context;
   private HTMLImageElement _carImage;
   private boolean _carImageLoaded;
-  private double _ballX;
-  private double _ballY;
-  private double _ballSpeedX;
-  private double _ballSpeedY;
+  private double _carX;
+  private double _carY;
+  private double _carSpeedX;
+  private double _carSpeedY;
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
   private boolean _showTrackCoords = false;
-  private boolean _ballToMouseLeft = false;
-  private boolean _ballToMouseRight = false;
+  private boolean _carToMouseLeft = false;
+  private boolean _carToMouseRight = false;
   private double _mouseX;
   private double _mouseY;
 
@@ -115,40 +115,40 @@ public class Racing
       _showTrackCoords = !_showTrackCoords;
       _showMouseCoords = false;
     }
-    // the 3 key instantly transports ball to mouse and changes direction to left direction
+    // the 3 key instantly transports car to mouse and changes direction to left direction
     else if ( "3".equals( event.key ) )
     {
-      _ballX = _mouseX;
-      _ballY = _mouseY;
-      _ballSpeedX = 4D;
-      _ballSpeedY = -4D;
+      _carX = _mouseX;
+      _carY = _mouseY;
+      _carSpeedX = 4D;
+      _carSpeedY = -4D;
     }
-    // the 4 key instantly transports ball to mouse and changes direction to right direction
+    // the 4 key instantly transports car to mouse and changes direction to right direction
     else if ( "4".equals( event.key ) )
     {
-      _ballX = _mouseX;
-      _ballY = _mouseY;
-      _ballSpeedX = -4D;
-      _ballSpeedY = -4D;
+      _carX = _mouseX;
+      _carY = _mouseY;
+      _carSpeedX = -4D;
+      _carSpeedY = -4D;
     }
-    // the 5 key transports ball to mouse when the mouse moves and changes direction to left direction
+    // the 5 key transports car to mouse when the mouse moves and changes direction to left direction
     // the control is a toggle
     else if ( "5".equals( event.key ) )
     {
-      _ballToMouseLeft = !_ballToMouseLeft;
-      if ( _ballToMouseLeft )
+      _carToMouseLeft = !_carToMouseLeft;
+      if ( _carToMouseLeft )
       {
-        _ballToMouseRight = false;
+        _carToMouseRight = false;
       }
     }
-    // the 6 key transports ball to mouse when the mouse moves and changes direction to left direction
+    // the 6 key transports car to mouse when the mouse moves and changes direction to left direction
     // the control is a toggle
     else if ( "6".equals( event.key ) )
     {
-      _ballToMouseRight = !_ballToMouseRight;
-      if ( _ballToMouseRight )
+      _carToMouseRight = !_carToMouseRight;
+      if ( _carToMouseRight )
       {
-        _ballToMouseLeft = false;
+        _carToMouseLeft = false;
       }
     }
   }
@@ -165,19 +165,19 @@ public class Racing
     _mouseX = event.clientX - rect.x - root.scrollLeft;
     _mouseY = event.clientY - rect.top - root.scrollTop;
 
-    if ( _ballToMouseLeft )
+    if ( _carToMouseLeft )
     {
-      _ballX = _mouseX;
-      _ballY = _mouseY;
-      _ballSpeedX = -4D;
-      _ballSpeedY = -4D;
+      _carX = _mouseX;
+      _carY = _mouseY;
+      _carSpeedX = -4D;
+      _carSpeedY = -4D;
     }
-    else if ( _ballToMouseRight )
+    else if ( _carToMouseRight )
     {
-      _ballX = _mouseX;
-      _ballY = _mouseY;
-      _ballSpeedX = 4D;
-      _ballSpeedY = -4D;
+      _carX = _mouseX;
+      _carY = _mouseY;
+      _carSpeedX = 4D;
+      _carSpeedY = -4D;
     }
   }
 
@@ -192,63 +192,63 @@ public class Racing
 
   private void simulateWorld()
   {
-    moveBall();
+    moveCar();
 
-    ballTrackCollisionDetection();
+    carTrackCollisionDetection();
   }
 
-  private void moveBall()
+  private void moveCar()
   {
-    _ballX += _ballSpeedX;
-    _ballY += _ballSpeedY;
+    _carX += _carSpeedX;
+    _carY += _carSpeedY;
 
-    final double ballTopY = _ballY - BALL_RADIUS;
-    final double ballBottomY = _ballY + BALL_RADIUS;
-    final double ballLeftX = _ballX - BALL_RADIUS;
-    final double ballRightX = _ballX + BALL_RADIUS;
+    final double carTopY = _carY - CAR_RADIUS;
+    final double carBottomY = _carY + CAR_RADIUS;
+    final double carLeftX = _carX - CAR_RADIUS;
+    final double carRightX = _carX + CAR_RADIUS;
 
     // Bounce off the top edge
-    if ( ballTopY < 0 )
+    if ( carTopY < 0 )
     {
-      // Ensure that if the ball is coming down because it has somehow got above
+      // Ensure that if the car is coming down because it has somehow got above
       // the world then let it continue coming down
-      if ( _ballSpeedY < 0 )
+      if ( _carSpeedY < 0 )
       {
-        _ballSpeedY = -_ballSpeedY;
+        _carSpeedY = -_carSpeedY;
       }
     }
-    // Reset game if missed and ball falls off the bottom edge
-    else if ( ballBottomY > _canvas.height )
+    // Reset game if missed and car falls off the bottom edge
+    else if ( carBottomY > _canvas.height )
     {
       resetGame();
     }
     // Bounce off the side edges
-    else if ( ballRightX > _canvas.width )
+    else if ( carRightX > _canvas.width )
     {
-      // If the ball is outside the world coming in then let
+      // If the car is outside the world coming in then let
       // it, otherwise reverse it back towards the world.
       // Sometimes the paddle will jump it outside the world
-      if ( _ballSpeedX > 0 )
+      if ( _carSpeedX > 0 )
       {
-        _ballSpeedX = -_ballSpeedX;
+        _carSpeedX = -_carSpeedX;
       }
     }
-    else if ( ballLeftX < 0 )
+    else if ( carLeftX < 0 )
     {
-      // If the ball is outside the world coming in then let
+      // If the car is outside the world coming in then let
       // it, otherwise reverse it back towards the world.
       // Sometimes the paddle will jump it outside the world
-      if ( _ballSpeedX < 0 )
+      if ( _carSpeedX < 0 )
       {
-        _ballSpeedX = -_ballSpeedX;
+        _carSpeedX = -_carSpeedX;
       }
     }
   }
 
-  private void ballReset()
+  private void carReset()
   {
-    _ballSpeedX = ( Math.random() < 0.5 ? -1D : 1D ) * randomValue( MIN_INITIAL_X_SPEED, MAX_INITIAL_X_SPEED );
-    _ballSpeedY = randomValue( MIN_INITIAL_Y_SPEED, MAX_INITIAL_Y_SPEED );
+    _carSpeedX = ( Math.random() < 0.5 ? -1D : 1D ) * randomValue( MIN_INITIAL_X_SPEED, MAX_INITIAL_X_SPEED );
+    _carSpeedY = randomValue( MIN_INITIAL_Y_SPEED, MAX_INITIAL_Y_SPEED );
 
     for ( int i = 0; i < TRACK_COLUMNS; i++ )
     {
@@ -256,46 +256,46 @@ public class Racing
       {
         if ( 2 == trackGrid[ trackIndex( i, j ) ] )
         {
-          _ballX = i * TRACK_WIDTH + ( TRACK_WIDTH / 2 );
-          _ballY = j * TRACK_HEIGHT + ( TRACK_HEIGHT / 2 );
+          _carX = i * TRACK_WIDTH + ( TRACK_WIDTH / 2 );
+          _carY = j * TRACK_HEIGHT + ( TRACK_HEIGHT / 2 );
           break;
         }
       }
     }
   }
 
-  private void ballTrackCollisionDetection()
+  private void carTrackCollisionDetection()
   {
-    final int ballTrackCol = toTrackColumn( _ballX );
-    final int ballTrackRow = toTrackRow( _ballY );
-    if ( isValidTrackCoordinates( ballTrackCol, ballTrackRow ) )
+    final int carTrackCol = toTrackColumn( _carX );
+    final int carTrackRow = toTrackRow( _carY );
+    if ( isValidTrackCoordinates( carTrackCol, carTrackRow ) )
     {
-      if ( 1 == trackGrid[ trackIndex( ballTrackCol, ballTrackRow ) ] )
+      if ( 1 == trackGrid[ trackIndex( carTrackCol, carTrackRow ) ] )
       {
-        final int prevBallTrackCol = toTrackColumn( _ballX - _ballSpeedX );
-        final int prevBallTrackRow = toTrackRow( _ballY - _ballSpeedY );
-        if ( prevBallTrackCol != ballTrackCol )
+        final int prevCarTrackCol = toTrackColumn( _carX - _carSpeedX );
+        final int prevCarTrackRow = toTrackRow( _carY - _carSpeedY );
+        if ( prevCarTrackCol != carTrackCol )
         {
           if (
             // Don't reflect if we hit a horizontal surface
-            0 == trackGrid[ trackIndex( prevBallTrackCol, ballTrackRow ) ] ||
+            0 == trackGrid[ trackIndex( prevCarTrackCol, carTrackRow ) ] ||
 
             // This next condition handles the scenario where hit inside corner where we still want to reverse
-            1 == trackGrid[ trackIndex( ballTrackCol, prevBallTrackRow ) ] )
+            1 == trackGrid[ trackIndex( carTrackCol, prevCarTrackRow ) ] )
           {
-            _ballSpeedX = -_ballSpeedX;
+            _carSpeedX = -_carSpeedX;
           }
         }
-        if ( prevBallTrackRow != ballTrackRow )
+        if ( prevCarTrackRow != carTrackRow )
         {
           if (
             // Don't reflect if we hit a vertical surface
-            0 == trackGrid[ trackIndex( ballTrackCol, prevBallTrackRow ) ] ||
+            0 == trackGrid[ trackIndex( carTrackCol, prevCarTrackRow ) ] ||
 
             // This next condition handles the scenario where hit inside corner where we still want to reverse
-            1 == trackGrid[ trackIndex( prevBallTrackCol, ballTrackRow ) ] )
+            1 == trackGrid[ trackIndex( prevCarTrackCol, carTrackRow ) ] )
           {
-            _ballSpeedY = -_ballSpeedY;
+            _carSpeedY = -_carSpeedY;
           }
         }
       }
@@ -304,7 +304,7 @@ public class Racing
 
   private void resetGame()
   {
-    ballReset();
+    carReset();
   }
 
   private double randomValue( final double min, final double max )
@@ -341,7 +341,7 @@ public class Racing
     if ( _carImageLoaded )
     {
       // X/Y indicate center where drawImage is top left corner
-      _context.drawImage( _carImage, _ballX - BALL_RADIUS, _ballY - BALL_RADIUS );
+      _context.drawImage( _carImage, _carX - CAR_RADIUS, _carY - CAR_RADIUS );
     }
   }
 
