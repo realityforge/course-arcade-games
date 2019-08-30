@@ -34,7 +34,7 @@ public class Racing
   // 0 - is space
   // 1 - is wall
   // 2 - is starting location
-  private static final int[] trackGrid = new int[]{
+  private static final int[] world = new int[]{
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
     1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -254,7 +254,7 @@ public class Racing
     {
       for ( int j = 0; j < TRACK_ROWS; j++ )
       {
-        if ( 2 == trackGrid[ trackIndex( i, j ) ] )
+        if ( 2 == world[ trackIndex( i, j ) ] )
         {
           _carX = i * TRACK_WIDTH + ( TRACK_WIDTH / 2 );
           _carY = j * TRACK_HEIGHT + ( TRACK_HEIGHT / 2 );
@@ -270,7 +270,7 @@ public class Racing
     final int carTrackRow = toTrackRow( _carY );
     if ( isValidTrackCoordinates( carTrackCol, carTrackRow ) )
     {
-      if ( 1 == trackGrid[ trackIndex( carTrackCol, carTrackRow ) ] )
+      if ( 1 == world[ trackIndex( carTrackCol, carTrackRow ) ] )
       {
         final int prevCarTrackCol = toTrackColumn( _carX - _carSpeedX );
         final int prevCarTrackRow = toTrackRow( _carY - _carSpeedY );
@@ -278,10 +278,10 @@ public class Racing
         {
           if (
             // Don't reflect if we hit a horizontal surface
-            0 == trackGrid[ trackIndex( prevCarTrackCol, carTrackRow ) ] ||
+            0 == world[ trackIndex( prevCarTrackCol, carTrackRow ) ] ||
 
             // This next condition handles the scenario where hit inside corner where we still want to reverse
-            1 == trackGrid[ trackIndex( carTrackCol, prevCarTrackRow ) ] )
+            1 == world[ trackIndex( carTrackCol, prevCarTrackRow ) ] )
           {
             _carSpeedX = -_carSpeedX;
           }
@@ -290,10 +290,10 @@ public class Racing
         {
           if (
             // Don't reflect if we hit a vertical surface
-            0 == trackGrid[ trackIndex( carTrackCol, prevCarTrackRow ) ] ||
+            0 == world[ trackIndex( carTrackCol, prevCarTrackRow ) ] ||
 
             // This next condition handles the scenario where hit inside corner where we still want to reverse
-            1 == trackGrid[ trackIndex( prevCarTrackCol, carTrackRow ) ] )
+            1 == world[ trackIndex( prevCarTrackCol, carTrackRow ) ] )
           {
             _carSpeedY = -_carSpeedY;
           }
@@ -367,7 +367,7 @@ public class Racing
       final double rowY = i * TRACK_HEIGHT;
       for ( int j = 0; j < TRACK_COLUMNS; j++ )
       {
-        if ( 1 == trackGrid[ trackIndex( j, i ) ] )
+        if ( 1 == world[ trackIndex( j, i ) ] )
         {
           drawRect( TRACK_WIDTH * j, rowY, TRACK_WIDTH - TRACK_GAP, TRACK_HEIGHT - TRACK_GAP, "blue" );
         }
