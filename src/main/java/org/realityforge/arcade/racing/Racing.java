@@ -6,6 +6,7 @@ import elemental2.dom.DOMRect;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.HTMLHtmlElement;
+import elemental2.dom.HTMLImageElement;
 import elemental2.dom.KeyboardEvent;
 import elemental2.dom.MouseEvent;
 import javax.annotation.Nonnull;
@@ -29,7 +30,6 @@ public class Racing
   private static final double MIN_INITIAL_X_SPEED = 0.5D;
   private static final double MAX_INITIAL_Y_SPEED = 12D;
   private static final double MIN_INITIAL_Y_SPEED = 7D;
-
   // The world map.
   // 0 - is space
   // 1 - is wall
@@ -53,6 +53,8 @@ public class Racing
     };
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
+  private HTMLImageElement _carImage;
+  private boolean _carImageLoaded;
   private double _ballX;
   private double _ballY;
   private double _ballSpeedX;
@@ -68,6 +70,7 @@ public class Racing
   @Override
   public void onModuleLoad()
   {
+    prepareCarImage();
     _canvas = (HTMLCanvasElement) DomGlobal.document.createElement( "canvas" );
     _canvas.height = WORLD_HEIGHT;
     _canvas.width = WORLD_WIDTH;
@@ -81,6 +84,17 @@ public class Racing
 
     runFrame();
     DomGlobal.setInterval( v -> runFrame(), FRAME_DELAY );
+  }
+
+  private void prepareCarImage()
+  {
+    _carImage = (HTMLImageElement) DomGlobal.document.createElement( "img" );
+    _carImage.onload = e -> {
+      _carImageLoaded = true;
+      //Fix this after Elemental2 is fixed
+      return null;
+    };
+    _carImage.src = "car.png";
   }
 
   private void onKeyPress( @Nonnull final KeyboardEvent event )
@@ -305,8 +319,7 @@ public class Racing
 
     drawTracks();
 
-    // Ball
-    drawCircle( _ballX, _ballY, BALL_RADIUS, "red" );
+    drawCar();
 
     if ( _showMouseCoords )
     {
@@ -320,6 +333,15 @@ public class Racing
       {
         drawText( _mouseX, _mouseY, Math.floor( trackCol ) + "," + Math.floor( trackRow ), "yellow" );
       }
+    }
+  }
+
+  private void drawCar()
+  {
+    if ( _carImageLoaded )
+    {
+      // X/Y indicate center where drawImage is top left corner
+      _context.drawImage( _carImage, _ballX - BALL_RADIUS, _ballY - BALL_RADIUS );
     }
   }
 
