@@ -256,7 +256,7 @@ public class Racing
     final int ballTrackRow = toTrackRow( _ballY );
     if ( isValidTrackCoordinates( ballTrackCol, ballTrackRow ) )
     {
-      if ( 0 != trackGrid[ trackIndex( ballTrackCol, ballTrackRow ) ] )
+      if ( 1 == trackGrid[ trackIndex( ballTrackCol, ballTrackRow ) ] )
       {
         final int prevBallTrackCol = toTrackColumn( _ballX - _ballSpeedX );
         final int prevBallTrackRow = toTrackRow( _ballY - _ballSpeedY );
