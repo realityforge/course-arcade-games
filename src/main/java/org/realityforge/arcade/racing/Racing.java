@@ -8,7 +8,6 @@ import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.HTMLHtmlElement;
 import elemental2.dom.KeyboardEvent;
 import elemental2.dom.MouseEvent;
-import java.util.Arrays;
 import javax.annotation.Nonnull;
 import jsinterop.base.Js;
 
@@ -17,9 +16,9 @@ public class Racing
 {
   private static final int WORLD_WIDTH = 800;
   private static final int WORLD_HEIGHT = 600;
-  private static final int TRACKS_PER_ROW = 20;
+  private static final int TRACK_COLUMNS = 20;
   private static final int TRACK_ROWS = 15;
-  private static final double TRACK_WIDTH = WORLD_WIDTH * 1D / TRACKS_PER_ROW;
+  private static final double TRACK_WIDTH = WORLD_WIDTH * 1D / TRACK_COLUMNS;
   private static final double TRACK_HEIGHT = 40D;
   private static final double TRACK_GAP = 2D;
   private static final int FRAMES_PER_SECOND = 30;
@@ -30,7 +29,28 @@ public class Racing
   private static final double MIN_INITIAL_X_SPEED = 0.5D;
   private static final double MAX_INITIAL_Y_SPEED = 12D;
   private static final double MIN_INITIAL_Y_SPEED = 7D;
-  private static final boolean[] trackGrid = new boolean[ TRACKS_PER_ROW * TRACK_ROWS ];
+
+  // The world map.
+  // 0 - is space
+  // 1 - is wall
+  // 2 - is starting location
+  private static final int[] trackGrid = new int[]{
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1,
+    1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1,
+    1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
+    1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1,
+    1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    };
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
   private double _ballX;
@@ -61,11 +81,6 @@ public class Racing
 
     runFrame();
     DomGlobal.setInterval( v -> runFrame(), FRAME_DELAY );
-  }
-
-  private void resetTracks()
-  {
-    Arrays.fill( trackGrid, true );
   }
 
   private void onKeyPress( @Nonnull final KeyboardEvent event )
@@ -221,8 +236,18 @@ public class Racing
     _ballSpeedX = ( Math.random() < 0.5 ? -1D : 1D ) * randomValue( MIN_INITIAL_X_SPEED, MAX_INITIAL_X_SPEED );
     _ballSpeedY = randomValue( MIN_INITIAL_Y_SPEED, MAX_INITIAL_Y_SPEED );
 
-    _ballX = _canvas.width / 2D;
-    _ballY = ( TRACK_HEIGHT * TRACK_ROWS ) + TRACK_HEIGHT;
+    for ( int i = 0; i < TRACK_COLUMNS; i++ )
+    {
+      for ( int j = 0; j < TRACK_ROWS; j++ )
+      {
+        if ( 2 == trackGrid[ trackIndex( i, j ) ] )
+        {
+          _ballX = i * TRACK_WIDTH + ( TRACK_WIDTH / 2 );
+          _ballY = j * TRACK_HEIGHT + ( TRACK_HEIGHT / 2 );
+          break;
+        }
+      }
+    }
   }
 
   private void ballTrackCollisionDetection()
@@ -231,20 +256,18 @@ public class Racing
     final int ballTrackRow = toTrackRow( _ballY );
     if ( isValidTrackCoordinates( ballTrackCol, ballTrackRow ) )
     {
-      if ( trackGrid[ trackIndex( ballTrackCol, ballTrackRow ) ] )
+      if ( 0 != trackGrid[ trackIndex( ballTrackCol, ballTrackRow ) ] )
       {
-        trackGrid[ trackIndex( ballTrackCol, ballTrackRow ) ] = false;
-
         final int prevBallTrackCol = toTrackColumn( _ballX - _ballSpeedX );
         final int prevBallTrackRow = toTrackRow( _ballY - _ballSpeedY );
         if ( prevBallTrackCol != ballTrackCol )
         {
           if (
             // Don't reflect if we hit a horizontal surface
-            !trackGrid[ trackIndex( prevBallTrackCol, ballTrackRow ) ] ||
+            0 == trackGrid[ trackIndex( prevBallTrackCol, ballTrackRow ) ] ||
 
             // This next condition handles the scenario where hit inside corner where we still want to reverse
-            trackGrid[ trackIndex( ballTrackCol, prevBallTrackRow ) ] )
+            1 == trackGrid[ trackIndex( ballTrackCol, prevBallTrackRow ) ] )
           {
             _ballSpeedX = -_ballSpeedX;
           }
@@ -253,10 +276,10 @@ public class Racing
         {
           if (
             // Don't reflect if we hit a vertical surface
-            !trackGrid[ trackIndex( ballTrackCol, prevBallTrackRow ) ] ||
+            0 == trackGrid[ trackIndex( ballTrackCol, prevBallTrackRow ) ] ||
 
             // This next condition handles the scenario where hit inside corner where we still want to reverse
-            trackGrid[ trackIndex( prevBallTrackCol, ballTrackRow ) ] )
+            1 == trackGrid[ trackIndex( prevBallTrackCol, ballTrackRow ) ] )
           {
             _ballSpeedY = -_ballSpeedY;
           }
@@ -267,7 +290,6 @@ public class Racing
 
   private void resetGame()
   {
-    resetTracks();
     ballReset();
   }
 
@@ -303,7 +325,7 @@ public class Racing
 
   private boolean isValidTrackCoordinates( final double trackCol, final double trackRow )
   {
-    return trackCol >= 0 && trackCol < TRACKS_PER_ROW && trackRow >= 0 && trackRow < TRACK_ROWS;
+    return trackCol >= 0 && trackCol < TRACK_COLUMNS && trackRow >= 0 && trackRow < TRACK_ROWS;
   }
 
   private int toTrackRow( final double mouseY )
@@ -321,9 +343,9 @@ public class Racing
     for ( int i = 0; i < TRACK_ROWS; i++ )
     {
       final double rowY = i * TRACK_HEIGHT;
-      for ( int j = 0; j < TRACKS_PER_ROW; j++ )
+      for ( int j = 0; j < TRACK_COLUMNS; j++ )
       {
-        if ( trackGrid[ trackIndex( j, i ) ] )
+        if ( 1 == trackGrid[ trackIndex( j, i ) ] )
         {
           drawRect( TRACK_WIDTH * j, rowY, TRACK_WIDTH - TRACK_GAP, TRACK_HEIGHT - TRACK_GAP, "blue" );
         }
@@ -333,7 +355,7 @@ public class Racing
 
   private int trackIndex( final int column, final int row )
   {
-    return row * TRACKS_PER_ROW + column;
+    return row * TRACK_COLUMNS + column;
   }
 
   private void clearBackground()
