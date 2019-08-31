@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 final class ImageAssets
 {
   @Nonnull
-  private final Set<String> _imageNames = new HashSet<>(  );
+  private final Set<String> _imageNames = new HashSet<>();
   @Nonnull
   private final Map<String, HTMLImageElement> _images = new HashMap<>();
   @Nonnull
