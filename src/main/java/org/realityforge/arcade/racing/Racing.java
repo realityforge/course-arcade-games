@@ -24,18 +24,16 @@ public class Racing
   private boolean _carToMouse = false;
   private double _mouseX;
   private double _mouseY;
-  private HTMLImageElement _roadImage;
-  private HTMLImageElement _wallImage;
+  private ImageAssets _imageAssets;
 
   @Override
   public void onModuleLoad()
   {
-    _roadImage = (HTMLImageElement) DomGlobal.document.createElement( "img" );
-    _roadImage.src = "track_road.png";
-    _wallImage = (HTMLImageElement) DomGlobal.document.createElement( "img" );
-    _wallImage.src = "track_wall.png";
+    _imageAssets = new ImageAssets( this::onReady );
+  }
 
-    _car.getBody().loadImage( "car.png" );
+  private void onReady()
+  {
     _renderer = new Renderer();
 
     _renderer.getCanvas().addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
@@ -202,7 +200,8 @@ public class Racing
   {
     drawWorld();
 
-    _renderer.drawBody( _car.getBody() );
+    final Body body = _car.getBody();
+    _renderer.drawImageWithRotation( _imageAssets.getCarImage(), body.getX(), body.getY(), body.getAngle() );
 
     if ( _showMouseCoords )
     {
@@ -226,9 +225,9 @@ public class Racing
       final double rowY = i * World.CELL_HEIGHT;
       for ( int j = 0; j < World.COLUMN_COUNT; j++ )
       {
-        final HTMLImageElement tile = World.CELL_WALL_TYPE == _world.getCell( j, i ) ? _wallImage : _roadImage;
+        final HTMLImageElement tile =
+          World.CELL_WALL_TYPE == _world.getCell( j, i ) ? _imageAssets.getWallImage() : _imageAssets.getRoadImage();
         _renderer.drawImage( tile, World.CELL_WIDTH * j, rowY );
-
       }
     }
   }

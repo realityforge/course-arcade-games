@@ -31,18 +31,10 @@ final class Renderer
     return _canvas;
   }
 
-  void drawBody( @Nonnull final Body body )
-  {
-    if ( body.isImageLoaded() )
-    {
-      drawImageWithRotation( body.getImage(), body.getX(), body.getY(), body.getAngle() );
-    }
-  }
-
-  private void drawImageWithRotation( @Nonnull final HTMLImageElement image,
-                                      final double centerX,
-                                      final double centerY,
-                                      final double angleInRadians )
+  void drawImageWithRotation( @Nonnull final HTMLImageElement image,
+                              final double centerX,
+                              final double centerY,
+                              final double angleInRadians )
   {
     // Save the context and push it onto stack
     // This is presumable rotation matrix and friends although unclear exactly what is included)
