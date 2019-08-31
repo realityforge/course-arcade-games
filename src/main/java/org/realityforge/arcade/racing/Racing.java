@@ -247,8 +247,8 @@ public class Racing
 
   private void carReset()
   {
-    _carSpeedX = ( Math.random() < 0.5 ? -1D : 1D ) * randomValue( MIN_INITIAL_X_SPEED, MAX_INITIAL_X_SPEED );
-    _carSpeedY = randomValue( MIN_INITIAL_Y_SPEED, MAX_INITIAL_Y_SPEED );
+    _carSpeed = 0;
+    _carAngle = Math.PI * 0.5D;
 
     for ( int i = 0; i < TRACK_COLUMNS; i++ )
     {
