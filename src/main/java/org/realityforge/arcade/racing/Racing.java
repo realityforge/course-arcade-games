@@ -17,41 +17,13 @@ public class Racing
 {
   private static final int WORLD_WIDTH = 800;
   private static final int WORLD_HEIGHT = 600;
-  private static final int TRACK_COLUMNS = 20;
-  private static final int TRACK_ROWS = 15;
-  private static final double TRACK_WIDTH = WORLD_WIDTH * 1D / TRACK_COLUMNS;
-  private static final double TRACK_HEIGHT = 40D;
   private static final double TRACK_GAP = 2D;
   private static final int FRAMES_PER_SECOND = 30;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
-  // The world map.
-  // 0 - is space
-  // 1 - is wall
-  // 2 - is starting location
-  private static final int[] world = new int[]{
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-    1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-    1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1,
-    1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    };
-  @SuppressWarnings( "unused" )
-  private static final int TRACK_ROAD = 0;
-  private static final int TRACK_WALL = 1;
-  private static final int TRACK_START = 2;
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
+  private final World _world = new World();
   private final Car _car = new Car();
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
@@ -205,36 +177,23 @@ public class Racing
     body.setSpeed( 0 );
     body.setAngle( Math.PI * 0.5D );
 
-    for ( int i = 0; i < TRACK_COLUMNS; i++ )
-    {
-      for ( int j = 0; j < TRACK_ROWS; j++ )
-      {
-        if ( TRACK_START == world[ trackIndex( i, j ) ] )
-        {
-          body.setX( i * TRACK_WIDTH + ( TRACK_WIDTH / 2 ) );
-          body.setY( j * TRACK_HEIGHT + ( TRACK_HEIGHT / 2 ) );
-          break;
-        }
-      }
-    }
+    final WorldPosition startCell = _world.getStartCell();
+    assert null != startCell;
+    body.setX( startCell.getColumn() * World.CELL_WIDTH + ( World.CELL_WIDTH / 2 ) );
+    body.setY( startCell.getRow() * World.CELL_HEIGHT + ( World.CELL_HEIGHT / 2 ) );
   }
 
   private void carWallCollisionDetection()
   {
     final Body body = _car.getBody();
-    final int carTrackCol = toTrackColumn( body.getX() );
-    final int carTrackRow = toTrackRow( body.getY() );
-    if ( isValidTrackCoordinates( carTrackCol, carTrackRow ) )
+    if ( World.CELL_WALL_TYPE == _world.getCell( body ) )
     {
-      if ( TRACK_WALL == world[ trackIndex( carTrackCol, carTrackRow ) ] )
-      {
-        // This is to reverse action of frame to avoid car getting stuck in the wall before we reverse direction
-        // otherwise next frame could see car try to reverse out when inside the wall and not make it out
-        _car.reverseMove();
+      // This is to reverse action of frame to avoid car getting stuck in the wall before we reverse direction
+      // otherwise next frame could see car try to reverse out when inside the wall and not make it out
+      _car.reverseMove();
 
-        // The bounce saps some energy
-        body.setSpeed( 0.3 * -body.getSpeed() );
-      }
+      // The bounce saps some energy
+      body.setSpeed( 0.3 * -body.getSpeed() );
     }
   }
 
@@ -248,7 +207,7 @@ public class Racing
     // Background
     clearBackground();
 
-    drawTracks();
+    drawWorld();
 
     drawBody( _car.getBody() );
 
@@ -258,9 +217,9 @@ public class Racing
     }
     else if ( _showTrackCoords )
     {
-      final double trackCol = toTrackColumn( _mouseX );
-      final double trackRow = toTrackRow( _mouseY );
-      if ( isValidTrackCoordinates( trackCol, trackRow ) )
+      final double trackCol = _world.toCellColumn( _mouseX );
+      final double trackRow = _world.toCellRow( _mouseY );
+      if ( _world.isValidCell( trackCol, trackRow ) )
       {
         drawText( _mouseX, _mouseY, Math.floor( trackCol ) + "," + Math.floor( trackRow ), "yellow" );
       }
@@ -294,39 +253,19 @@ public class Racing
     _context.restore();
   }
 
-  private boolean isValidTrackCoordinates( final double trackCol, final double trackRow )
+  private void drawWorld()
   {
-    return trackCol >= 0 && trackCol < TRACK_COLUMNS && trackRow >= 0 && trackRow < TRACK_ROWS;
-  }
-
-  private int toTrackRow( final double mouseY )
-  {
-    return (int) Math.floor( mouseY / TRACK_HEIGHT );
-  }
-
-  private int toTrackColumn( final double x )
-  {
-    return (int) Math.floor( x / TRACK_WIDTH );
-  }
-
-  private void drawTracks()
-  {
-    for ( int i = 0; i < TRACK_ROWS; i++ )
+    for ( int i = 0; i < World.ROW_COUNT; i++ )
     {
-      final double rowY = i * TRACK_HEIGHT;
-      for ( int j = 0; j < TRACK_COLUMNS; j++ )
+      final double rowY = i * World.CELL_HEIGHT;
+      for ( int j = 0; j < World.COLUMN_COUNT; j++ )
       {
-        if ( TRACK_WALL == world[ trackIndex( j, i ) ] )
+        if ( World.CELL_WALL_TYPE == _world.getCell( j, i ) )
         {
-          drawRect( TRACK_WIDTH * j, rowY, TRACK_WIDTH - TRACK_GAP, TRACK_HEIGHT - TRACK_GAP, "blue" );
+          drawRect( World.CELL_WIDTH * j, rowY, World.CELL_WIDTH - TRACK_GAP, World.CELL_HEIGHT - TRACK_GAP, "blue" );
         }
       }
     }
-  }
-
-  private int trackIndex( final int column, final int row )
-  {
-    return row * TRACK_COLUMNS + column;
   }
 
   private void clearBackground()
