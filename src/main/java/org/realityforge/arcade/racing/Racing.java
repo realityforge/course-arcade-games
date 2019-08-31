@@ -50,34 +50,20 @@ public class Racing
   private static final int TRACK_ROAD = 0;
   private static final int TRACK_WALL = 1;
   private static final int TRACK_START = 2;
-
-  private static final double TURN_RATE = 0.04D;
-  private static final double DRIVE_POWER = 0.5D;
-  private static final double REVERSE_POWER = 0.2D;
-  private static final double SPEED_DECAY_RATE = 0.04;
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
-  private HTMLImageElement _carImage;
-  private boolean _carImageLoaded;
-  private double _carX;
-  private double _carY;
-  private double _carAngle;
-  private double _carSpeed;
+  private final Car _car = new Car();
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
   private boolean _showTrackCoords = false;
   private boolean _carToMouse = false;
-  private boolean _accelerateHeld = false;
-  private boolean _brakeHeld = false;
-  private boolean _leftHeld = false;
-  private boolean _rightHeld = false;
   private double _mouseX;
   private double _mouseY;
 
   @Override
   public void onModuleLoad()
   {
-    prepareCarImage();
+    _car.getBody().loadImage( "car.png" );
     _canvas = (HTMLCanvasElement) DomGlobal.document.createElement( "canvas" );
     _canvas.height = WORLD_HEIGHT;
     _canvas.width = WORLD_WIDTH;
@@ -92,17 +78,6 @@ public class Racing
 
     runFrame();
     DomGlobal.setInterval( v -> runFrame(), FRAME_DELAY );
-  }
-
-  private void prepareCarImage()
-  {
-    _carImage = (HTMLImageElement) DomGlobal.document.createElement( "img" );
-    _carImage.onload = e -> {
-      _carImageLoaded = true;
-      //Fix this after Elemental2 is fixed
-      return null;
-    };
-    _carImage.src = "car.png";
   }
 
   private void onKeyPress( @Nonnull final KeyboardEvent event )
@@ -126,10 +101,7 @@ public class Racing
     // the 3 key instantly transports car to mouse and changes direction to left direction
     else if ( "3".equals( event.key ) )
     {
-      _carX = _mouseX;
-      _carY = _mouseY;
-      _carAngle = 0;
-      _carSpeed = 0;
+      carToMouse();
     }
     // the 4 key transports car to mouse when the mouse moves
     else if ( "4".equals( event.key ) )
@@ -138,19 +110,19 @@ public class Racing
     }
     else if ( "ArrowLeft".equals( event.code ) )
     {
-      _leftHeld = true;
+      _car.setLeftHeld( true );
     }
     else if ( "ArrowRight".equals( event.code ) )
     {
-      _rightHeld = true;
+      _car.setRightHeld( true );
     }
     else if ( "ArrowUp".equals( event.code ) )
     {
-      _accelerateHeld = true;
+      _car.setAccelerateHeld( true );
     }
     else if ( "ArrowDown".equals( event.code ) )
     {
-      _brakeHeld = true;
+      _car.setBrakeHeld( true );
     }
     else
     {
@@ -163,19 +135,19 @@ public class Racing
   {
     if ( "ArrowLeft".equals( event.code ) )
     {
-      _leftHeld = false;
+      _car.setLeftHeld( false );
     }
     else if ( "ArrowRight".equals( event.code ) )
     {
-      _rightHeld = false;
+      _car.setRightHeld( false );
     }
     else if ( "ArrowUp".equals( event.code ) )
     {
-      _accelerateHeld = false;
+      _car.setAccelerateHeld( false );
     }
     else if ( "ArrowDown".equals( event.code ) )
     {
-      _brakeHeld = false;
+      _car.setBrakeHeld( false );
     }
     else
     {
@@ -198,11 +170,17 @@ public class Racing
 
     if ( _carToMouse )
     {
-      _carX = _mouseX;
-      _carY = _mouseY;
-      _carSpeed = 0;
-      _carAngle = 0;
+      carToMouse();
     }
+  }
+
+  private void carToMouse()
+  {
+    final Body body = _car.getBody();
+    body.setX( _mouseX );
+    body.setY( _mouseY );
+    body.setAngle( 0 );
+    body.setSpeed( 0 );
   }
 
   private void runFrame()
@@ -216,39 +194,16 @@ public class Racing
 
   private void simulateWorld()
   {
-    moveCar();
+    _car.update();
 
-    carTrackCollisionDetection();
-  }
-
-  private void moveCar()
-  {
-    _carSpeed *= ( 1.0 - SPEED_DECAY_RATE );
-    if ( _leftHeld )
-    {
-      _carAngle -= TURN_RATE;
-    }
-    if ( _rightHeld )
-    {
-      _carAngle += TURN_RATE;
-    }
-    if ( _accelerateHeld )
-    {
-      _carSpeed += DRIVE_POWER;
-    }
-    if ( _brakeHeld )
-    {
-      _carSpeed -= REVERSE_POWER;
-    }
-
-    _carX += Math.cos( _carAngle ) * _carSpeed;
-    _carY += Math.sin( _carAngle ) * _carSpeed;
+    carWallCollisionDetection();
   }
 
   private void carReset()
   {
-    _carSpeed = 0;
-    _carAngle = Math.PI * 0.5D;
+    final Body body = _car.getBody();
+    body.setSpeed( 0 );
+    body.setAngle( Math.PI * 0.5D );
 
     for ( int i = 0; i < TRACK_COLUMNS; i++ )
     {
@@ -256,29 +211,29 @@ public class Racing
       {
         if ( TRACK_START == world[ trackIndex( i, j ) ] )
         {
-          _carX = i * TRACK_WIDTH + ( TRACK_WIDTH / 2 );
-          _carY = j * TRACK_HEIGHT + ( TRACK_HEIGHT / 2 );
+          body.setX( i * TRACK_WIDTH + ( TRACK_WIDTH / 2 ) );
+          body.setY( j * TRACK_HEIGHT + ( TRACK_HEIGHT / 2 ) );
           break;
         }
       }
     }
   }
 
-  private void carTrackCollisionDetection()
+  private void carWallCollisionDetection()
   {
-    final int carTrackCol = toTrackColumn( _carX );
-    final int carTrackRow = toTrackRow( _carY );
+    final Body body = _car.getBody();
+    final int carTrackCol = toTrackColumn( body.getX() );
+    final int carTrackRow = toTrackRow( body.getY() );
     if ( isValidTrackCoordinates( carTrackCol, carTrackRow ) )
     {
       if ( TRACK_WALL == world[ trackIndex( carTrackCol, carTrackRow ) ] )
       {
         // This is to reverse action of frame to avoid car getting stuck in the wall before we reverse direction
         // otherwise next frame could see car try to reverse out when inside the wall and not make it out
-        _carX -= Math.cos( _carAngle ) * _carSpeed;
-        _carY -= Math.sin( _carAngle ) * _carSpeed;
+        _car.reverseMove();
 
         // The bounce saps some energy
-        _carSpeed = 0.3 * -_carSpeed;
+        body.setSpeed( 0.3 * -body.getSpeed() );
       }
     }
   }
@@ -295,7 +250,7 @@ public class Racing
 
     drawTracks();
 
-    drawCar();
+    drawBody( _car.getBody() );
 
     if ( _showMouseCoords )
     {
@@ -312,11 +267,11 @@ public class Racing
     }
   }
 
-  private void drawCar()
+  private void drawBody( @Nonnull final Body body )
   {
-    if ( _carImageLoaded )
+    if ( body.isImageLoaded() )
     {
-      drawImageWithRotation( _carImage, _carX, _carY, _carAngle );
+      drawImageWithRotation( body.getImage(), body.getX(), body.getY(), body.getAngle() );
     }
   }
 
