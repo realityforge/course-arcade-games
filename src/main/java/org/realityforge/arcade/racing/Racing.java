@@ -340,9 +340,27 @@ public class Racing
   {
     if ( _carImageLoaded )
     {
-      // X/Y indicate center where drawImage is top left corner
-      _context.drawImage( _carImage, _carX - CAR_RADIUS, _carY - CAR_RADIUS );
+      drawImageWithRotation( _carImage, _carX, _carY, _carAngle );
     }
+  }
+
+  private void drawImageWithRotation( @Nonnull final HTMLImageElement image,
+                                      final double centerX,
+                                      final double centerY,
+                                      final double angleInRadians )
+  {
+    // Save the context and push it onto stack
+    // This is presumable rotation matrix and friends although unclear exactly what is included)
+    _context.save();
+
+    _context.translate( centerX, centerY );
+    _context.rotate( angleInRadians );
+
+    // X/Y indicate center where drawImage is top left corner
+    _context.drawImage( image, -image.width / 2D, -image.height / 2D );
+
+    // Pop state to return to transform matrix prior to method call
+    _context.restore();
   }
 
   private boolean isValidTrackCoordinates( final double trackCol, final double trackRow )
@@ -393,18 +411,6 @@ public class Racing
   {
     _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( color );
     _context.fillText( text, bottomLeftX, bottomLeftY );
-  }
-
-  @SuppressWarnings( "SameParameterValue" )
-  private void drawCircle( final double centerX,
-                           final double centerY,
-                           final double radius,
-                           @Nonnull final String color )
-  {
-    _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( color );
-    _context.beginPath();
-    _context.arc( centerX, centerY, radius, 0, Math.PI * 2 );
-    _context.fill();
   }
 
   @SuppressWarnings( "SameParameterValue" )
