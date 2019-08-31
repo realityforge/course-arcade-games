@@ -4,6 +4,7 @@ import com.google.gwt.core.client.EntryPoint;
 import elemental2.dom.DOMRect;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLHtmlElement;
+import elemental2.dom.HTMLImageElement;
 import elemental2.dom.KeyboardEvent;
 import elemental2.dom.MouseEvent;
 import javax.annotation.Nonnull;
@@ -11,7 +12,6 @@ import javax.annotation.Nonnull;
 public class Racing
   implements EntryPoint
 {
-  private static final double TRACK_GAP = 2D;
   private static final int FRAMES_PER_SECOND = 30;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
@@ -24,10 +24,17 @@ public class Racing
   private boolean _carToMouse = false;
   private double _mouseX;
   private double _mouseY;
+  private HTMLImageElement _roadImage;
+  private HTMLImageElement _wallImage;
 
   @Override
   public void onModuleLoad()
   {
+    _roadImage = (HTMLImageElement) DomGlobal.document.createElement( "img" );
+    _roadImage.src = "track_road.png";
+    _wallImage = (HTMLImageElement) DomGlobal.document.createElement( "img" );
+    _wallImage.src = "track_wall.png";
+
     _car.getBody().loadImage( "car.png" );
     _renderer = new Renderer();
 
@@ -222,14 +229,12 @@ public class Racing
       final double rowY = i * World.CELL_HEIGHT;
       for ( int j = 0; j < World.COLUMN_COUNT; j++ )
       {
-        if ( World.CELL_WALL_TYPE == _world.getCell( j, i ) )
-        {
-          _renderer.drawRect( World.CELL_WIDTH * j,
-                              rowY,
-                              World.CELL_WIDTH - TRACK_GAP,
-                              World.CELL_HEIGHT - TRACK_GAP,
-                              "blue" );
-        }
+        final HTMLImageElement tile = World.CELL_WALL_TYPE == _world.getCell( j, i ) ? _wallImage : _roadImage;
+        _renderer.drawImageWithRotation( tile,
+                                         World.CELL_WIDTH * j + 0.5 * World.CELL_WIDTH,
+                                         rowY + 0.5 * World.CELL_HEIGHT,
+                                         0 );
+
       }
     }
   }

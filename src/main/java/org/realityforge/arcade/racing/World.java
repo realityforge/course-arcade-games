@@ -5,11 +5,10 @@ import javax.annotation.Nullable;
 
 final class World
 {
-  static final int CELL_INVALID_TYPE= -1;
-  @SuppressWarnings( "unused" )
-  private static final int CELL_ROAD_TYPE = 0;
+  static final int CELL_INVALID_TYPE = -1;
+  static final int CELL_ROAD_TYPE = 0;
   static final int CELL_WALL_TYPE = 1;
-  private static final int CELL_START_TYPE = 2;
+  static final int CELL_START_TYPE = 2;
   // The world map.
   // 0 - is space
   // 1 - is wall
