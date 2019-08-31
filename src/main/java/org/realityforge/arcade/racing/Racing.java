@@ -272,32 +272,13 @@ public class Racing
     {
       if ( 1 == world[ trackIndex( carTrackCol, carTrackRow ) ] )
       {
-        final int prevCarTrackCol = toTrackColumn( _carX - _carSpeedX );
-        final int prevCarTrackRow = toTrackRow( _carY - _carSpeedY );
-        if ( prevCarTrackCol != carTrackCol )
-        {
-          if (
-            // Don't reflect if we hit a horizontal surface
-            0 == world[ trackIndex( prevCarTrackCol, carTrackRow ) ] ||
+        // This is to reverse action of frame to avoid car getting stuck in the wall before we reverse direction
+        // otherwise next frame could see car try to reverse out when inside the wall and not make it out
+        _carX -= Math.cos( _carAngle ) * _carSpeed;
+        _carY -= Math.sin( _carAngle ) * _carSpeed;
 
-            // This next condition handles the scenario where hit inside corner where we still want to reverse
-            1 == world[ trackIndex( carTrackCol, prevCarTrackRow ) ] )
-          {
-            _carSpeedX = -_carSpeedX;
-          }
-        }
-        if ( prevCarTrackRow != carTrackRow )
-        {
-          if (
-            // Don't reflect if we hit a vertical surface
-            0 == world[ trackIndex( carTrackCol, prevCarTrackRow ) ] ||
-
-            // This next condition handles the scenario where hit inside corner where we still want to reverse
-            1 == world[ trackIndex( prevCarTrackCol, carTrackRow ) ] )
-          {
-            _carSpeedY = -_carSpeedY;
-          }
-        }
+        // The bounce saps some energy
+        _carSpeed = 0.3 * -_carSpeed;
       }
     }
   }
