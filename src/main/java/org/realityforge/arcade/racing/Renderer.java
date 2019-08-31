@@ -63,11 +63,6 @@ final class Renderer
     _context.drawImage( image, topX, topY );
   }
 
-  void clearBackground()
-  {
-    drawRect( 0D, 0D, _canvas.width, _canvas.height, "black" );
-  }
-
   @SuppressWarnings( "SameParameterValue" )
   void drawText( final double bottomLeftX,
                  final double bottomLeftY,
@@ -76,16 +71,5 @@ final class Renderer
   {
     _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( color );
     _context.fillText( text, bottomLeftX, bottomLeftY );
-  }
-
-  @SuppressWarnings( "SameParameterValue" )
-  void drawRect( final double topLeftX,
-                 final double topLeftY,
-                 final double width,
-                 final double height,
-                 @Nonnull final String color )
-  {
-    _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( color );
-    _context.fillRect( topLeftX, topLeftY, width, height );
   }
 }

@@ -200,9 +200,6 @@ public class Racing
 
   private void renderWorld()
   {
-    // Background
-    _renderer.clearBackground();
-
     drawWorld();
 
     _renderer.drawBody( _car.getBody() );
