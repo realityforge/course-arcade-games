@@ -8,6 +8,7 @@ final class Car
   private static final double DRIVE_POWER = 0.5D;
   private static final double REVERSE_POWER = 0.2D;
   private static final double SPEED_DECAY_RATE = 0.04;
+  private static final double MIN_SPEED_TO_TURN = 0.5;
   @Nonnull
   private final Body _body = new Body();
   private boolean _accelerateHeld = false;
@@ -44,14 +45,16 @@ final class Car
   void update()
   {
     _body.setSpeed( _body.getSpeed() * ( 1.0 - SPEED_DECAY_RATE ) );
-
-    if ( _leftHeld )
+    if ( Math.abs( _body.getSpeed() ) > MIN_SPEED_TO_TURN )
     {
-      _body.setAngle( _body.getAngle() - TURN_RATE );
-    }
-    if ( _rightHeld )
-    {
-      _body.setAngle( _body.getAngle() + TURN_RATE );
+      if ( _leftHeld )
+      {
+        _body.setAngle( _body.getAngle() - TURN_RATE );
+      }
+      if ( _rightHeld )
+      {
+        _body.setAngle( _body.getAngle() + TURN_RATE );
+      }
     }
     if ( _accelerateHeld )
     {
