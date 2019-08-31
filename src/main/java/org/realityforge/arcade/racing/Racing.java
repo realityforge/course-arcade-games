@@ -25,11 +25,6 @@ public class Racing
   private static final int FRAMES_PER_SECOND = 30;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
-  private static final double CAR_RADIUS = 10D;
-  private static final double MAX_INITIAL_X_SPEED = 8D;
-  private static final double MIN_INITIAL_X_SPEED = 0.5D;
-  private static final double MAX_INITIAL_Y_SPEED = 12D;
-  private static final double MIN_INITIAL_Y_SPEED = 7D;
   // The world map.
   // 0 - is space
   // 1 - is wall
@@ -51,6 +46,8 @@ public class Racing
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     };
+  private static final double TURN_RATE = 0.04D;
+  private static final double ACCEL_RATE = 0.4D;
   private static final double FRICTION_RATIO = 0.04;
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
@@ -58,13 +55,16 @@ public class Racing
   private boolean _carImageLoaded;
   private double _carX;
   private double _carY;
-  private double _carSpeedX;
-  private double _carSpeedY;
+  private double _carAngle;
+  private double _carSpeed;
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
   private boolean _showTrackCoords = false;
-  private boolean _carToMouseLeft = false;
-  private boolean _carToMouseRight = false;
+  private boolean _carToMouse = false;
+  private boolean _accelerateHeld = false;
+  private boolean _brakeHeld = false;
+  private boolean _leftHeld = false;
+  private boolean _rightHeld = false;
   private double _mouseX;
   private double _mouseY;
 
@@ -80,6 +80,7 @@ public class Racing
 
     _canvas.addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
     DomGlobal.document.addEventListener( "keydown", e -> onKeyPress( (KeyboardEvent) e ) );
+    DomGlobal.document.addEventListener( "keyup", e -> onKeyRelease( (KeyboardEvent) e ) );
 
     resetGame();
 
@@ -121,37 +122,60 @@ public class Racing
     {
       _carX = _mouseX;
       _carY = _mouseY;
-      _carSpeedX = 4D;
-      _carSpeedY = -4D;
+      _carAngle = 0;
+      _carSpeed = 0;
     }
-    // the 4 key instantly transports car to mouse and changes direction to right direction
+    // the 4 key transports car to mouse when the mouse moves
     else if ( "4".equals( event.key ) )
     {
-      _carX = _mouseX;
-      _carY = _mouseY;
-      _carSpeedX = -4D;
-      _carSpeedY = -4D;
+      _carToMouse = !_carToMouse;
     }
-    // the 5 key transports car to mouse when the mouse moves and changes direction to left direction
-    // the control is a toggle
-    else if ( "5".equals( event.key ) )
+    else if ( "ArrowLeft".equals( event.code ) )
     {
-      _carToMouseLeft = !_carToMouseLeft;
-      if ( _carToMouseLeft )
-      {
-        _carToMouseRight = false;
-      }
+      _leftHeld = true;
     }
-    // the 6 key transports car to mouse when the mouse moves and changes direction to left direction
-    // the control is a toggle
-    else if ( "6".equals( event.key ) )
+    else if ( "ArrowRight".equals( event.code ) )
     {
-      _carToMouseRight = !_carToMouseRight;
-      if ( _carToMouseRight )
-      {
-        _carToMouseLeft = false;
-      }
+      _rightHeld = true;
     }
+    else if ( "ArrowUp".equals( event.code ) )
+    {
+      _accelerateHeld = true;
+    }
+    else if ( "ArrowDown".equals( event.code ) )
+    {
+      _brakeHeld = true;
+    }
+    else
+    {
+      return;
+    }
+    event.preventDefault();
+  }
+
+  private void onKeyRelease( @Nonnull final KeyboardEvent event )
+  {
+    if ( "ArrowLeft".equals( event.code ) )
+    {
+      _leftHeld = false;
+    }
+    else if ( "ArrowRight".equals( event.code ) )
+    {
+      _rightHeld = false;
+    }
+    else if ( "ArrowUp".equals( event.code ) )
+    {
+      _accelerateHeld = false;
+    }
+    else if ( "ArrowDown".equals( event.code ) )
+    {
+      _brakeHeld = false;
+    }
+    else
+    {
+      return;
+    }
+    event.preventDefault();
   }
 
   @SuppressWarnings( { "unused" } )
@@ -166,19 +190,12 @@ public class Racing
     _mouseX = event.clientX - rect.x - root.scrollLeft;
     _mouseY = event.clientY - rect.top - root.scrollTop;
 
-    if ( _carToMouseLeft )
+    if ( _carToMouse )
     {
       _carX = _mouseX;
       _carY = _mouseY;
-      _carSpeedX = -4D;
-      _carSpeedY = -4D;
-    }
-    else if ( _carToMouseRight )
-    {
-      _carX = _mouseX;
-      _carY = _mouseY;
-      _carSpeedX = 4D;
-      _carSpeedY = -4D;
+      _carSpeed = 0;
+      _carAngle = 0;
     }
   }
 
@@ -201,50 +218,25 @@ public class Racing
   private void moveCar()
   {
     _carSpeed *= (1.0 - FRICTION_RATIO) ;
-    _carX += _carSpeedX;
-    _carY += _carSpeedY;
+    if ( _leftHeld )
+    {
+      _carAngle -= TURN_RATE;
+    }
+    if ( _rightHeld )
+    {
+      _carAngle += TURN_RATE;
+    }
+    if ( _accelerateHeld )
+    {
+      _carSpeed += ACCEL_RATE;
+    }
+    if ( _brakeHeld )
+    {
+      _carSpeed -= ACCEL_RATE;
+    }
 
-    final double carTopY = _carY - CAR_RADIUS;
-    final double carBottomY = _carY + CAR_RADIUS;
-    final double carLeftX = _carX - CAR_RADIUS;
-    final double carRightX = _carX + CAR_RADIUS;
-
-    // Bounce off the top edge
-    if ( carTopY < 0 )
-    {
-      // Ensure that if the car is coming down because it has somehow got above
-      // the world then let it continue coming down
-      if ( _carSpeedY < 0 )
-      {
-        _carSpeedY = -_carSpeedY;
-      }
-    }
-    // Reset game if missed and car falls off the bottom edge
-    else if ( carBottomY > _canvas.height )
-    {
-      resetGame();
-    }
-    // Bounce off the side edges
-    else if ( carRightX > _canvas.width )
-    {
-      // If the car is outside the world coming in then let
-      // it, otherwise reverse it back towards the world.
-      // Sometimes the paddle will jump it outside the world
-      if ( _carSpeedX > 0 )
-      {
-        _carSpeedX = -_carSpeedX;
-      }
-    }
-    else if ( carLeftX < 0 )
-    {
-      // If the car is outside the world coming in then let
-      // it, otherwise reverse it back towards the world.
-      // Sometimes the paddle will jump it outside the world
-      if ( _carSpeedX < 0 )
-      {
-        _carSpeedX = -_carSpeedX;
-      }
-    }
+    _carX += Math.cos( _carAngle ) * _carSpeed;
+    _carY += Math.sin( _carAngle ) * _carSpeed;
   }
 
   private void carReset()
@@ -288,11 +280,6 @@ public class Racing
   private void resetGame()
   {
     carReset();
-  }
-
-  private double randomValue( final double min, final double max )
-  {
-    return ( Math.random() * ( max - min ) ) + min;
   }
 
   private void renderWorld()
