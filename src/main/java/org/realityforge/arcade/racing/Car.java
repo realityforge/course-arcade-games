@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 final class Car
 {
-  private static final double TURN_RATE = 0.04D;
+  private static final double TURN_RATE = 0.05D;
   private static final double DRIVE_POWER = 0.5D;
   private static final double REVERSE_POWER = 0.2D;
   private static final double SPEED_DECAY_RATE = 0.04;
