@@ -186,7 +186,7 @@ public class Racing
   private void carWallCollisionDetection()
   {
     final Body body = _car.getBody();
-    if ( World.CELL_WALL_TYPE == _world.getCell( body ) )
+    if ( _world.isSolid( _world.getCell( body ) ) )
     {
       // This is to reverse action of frame to avoid car getting stuck in the wall before we reverse direction
       // otherwise next frame could see car try to reverse out when inside the wall and not make it out
@@ -229,12 +229,21 @@ public class Racing
   {
     final HTMLImageElement roadTile = _imageAssets.getImageByName( "track_road" );
     final HTMLImageElement wallTile = _imageAssets.getImageByName( "track_wall" );
+    final HTMLImageElement goalTile = _imageAssets.getImageByName( "track_goal" );
+    final HTMLImageElement flagTile = _imageAssets.getImageByName( "track_flag" );
+    final HTMLImageElement treeTile = _imageAssets.getImageByName( "track_tree" );
     for ( int i = 0; i < World.ROW_COUNT; i++ )
     {
       final double rowY = i * World.CELL_HEIGHT;
       for ( int j = 0; j < World.COLUMN_COUNT; j++ )
       {
-        final HTMLImageElement tile = World.CELL_WALL_TYPE == _world.getCell( j, i ) ? wallTile : roadTile;
+        final int cell = _world.getCell( j, i );
+        final HTMLImageElement tile =
+          World.CELL_WALL_TYPE == cell ? wallTile :
+          World.CELL_GOAL_TYPE == cell ? goalTile :
+          World.CELL_FLAG_TYPE == cell ? flagTile :
+          World.CELL_TREE_TYPE == cell ? treeTile :
+          roadTile;
         _renderer.drawImage( tile, World.CELL_WIDTH * j, rowY );
       }
     }

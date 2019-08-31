@@ -5,30 +5,29 @@ import javax.annotation.Nullable;
 
 final class World
 {
-  static final int CELL_INVALID_TYPE = -1;
+  private static final int CELL_INVALID_TYPE = -1;
   static final int CELL_ROAD_TYPE = 0;
   static final int CELL_WALL_TYPE = 1;
-  static final int CELL_START_TYPE = 2;
-  // The world map.
-  // 0 - is space
-  // 1 - is wall
-  // 2 - is starting location
+  private static final int CELL_START_TYPE = 2;
+  static final int CELL_GOAL_TYPE = 3;
+  static final int CELL_TREE_TYPE = 4;
+  static final int CELL_FLAG_TYPE = 5;
   private static final int[] world = new int[]{
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
     1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-    1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 5, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 5, 1, 1, 0, 0, 1,
     1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-    1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1,
+    1, 1, 5, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 1, 4, 4, 4, 4, 4, 1, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 1, 1, 4, 4, 4, 4, 4, 1, 0, 0, 1, 0, 0, 0, 1, 1,
+    1, 0, 0, 0, 1, 4, 4, 4, 4, 4, 4, 1, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 1, 4, 4, 4, 1, 1, 1, 1, 0, 0, 1, 0, 5, 0, 0, 1,
     1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 1,
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
     };
   static final int COLUMN_COUNT = 20;
   static final int ROW_COUNT = 15;
@@ -53,6 +52,11 @@ final class World
     final int column = toCellColumn( body.getX() );
     final int row = toCellRow( body.getY() );
     return isValidCell( column, row ) ? getCell( column, row ) : CELL_INVALID_TYPE;
+  }
+
+  boolean isSolid( final int flag )
+  {
+    return !( CELL_ROAD_TYPE == flag || CELL_START_TYPE == flag );
   }
 
   @Nullable

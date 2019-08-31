@@ -27,6 +27,9 @@ final class ImageAssets
     _imageNames.add( "car" );
     _imageNames.add( "track_road" );
     _imageNames.add( "track_wall" );
+    _imageNames.add( "track_flag" );
+    _imageNames.add( "track_goal" );
+    _imageNames.add( "track_tree" );
     for ( final String imageName : _imageNames )
     {
       final HTMLImageElement img = (HTMLImageElement) DomGlobal.document.createElement( "img" );
