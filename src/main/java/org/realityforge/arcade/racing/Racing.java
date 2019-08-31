@@ -230,10 +230,7 @@ public class Racing
       for ( int j = 0; j < World.COLUMN_COUNT; j++ )
       {
         final HTMLImageElement tile = World.CELL_WALL_TYPE == _world.getCell( j, i ) ? _wallImage : _roadImage;
-        _renderer.drawImageWithRotation( tile,
-                                         World.CELL_WIDTH * j + 0.5 * World.CELL_WIDTH,
-                                         rowY + 0.5 * World.CELL_HEIGHT,
-                                         0 );
+        _renderer.drawImage( tile, World.CELL_WIDTH * j, rowY );
 
       }
     }

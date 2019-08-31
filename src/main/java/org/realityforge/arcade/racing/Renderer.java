@@ -31,12 +31,6 @@ final class Renderer
     return _canvas;
   }
 
-  @Nonnull
-  CanvasRenderingContext2D getContext()
-  {
-    return _context;
-  }
-
   void drawBody( @Nonnull final Body body )
   {
     if ( body.isImageLoaded() )
@@ -45,10 +39,10 @@ final class Renderer
     }
   }
 
-  void drawImageWithRotation( @Nonnull final HTMLImageElement image,
-                              final double centerX,
-                              final double centerY,
-                              final double angleInRadians )
+  private void drawImageWithRotation( @Nonnull final HTMLImageElement image,
+                                      final double centerX,
+                                      final double centerY,
+                                      final double angleInRadians )
   {
     // Save the context and push it onto stack
     // This is presumable rotation matrix and friends although unclear exactly what is included)
@@ -62,6 +56,11 @@ final class Renderer
 
     // Pop state to return to transform matrix prior to method call
     _context.restore();
+  }
+
+  void drawImage( @Nonnull final HTMLImageElement image, final double topX, final double topY )
+  {
+    _context.drawImage( image, topX, topY );
   }
 
   void clearBackground()
