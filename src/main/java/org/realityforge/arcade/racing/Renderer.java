@@ -56,6 +56,17 @@ final class Renderer
   }
 
   @SuppressWarnings( "SameParameterValue" )
+  void drawRect( final double topLeftX,
+                 final double topLeftY,
+                 final double width,
+                 final double height,
+                 @Nonnull final String color )
+  {
+    _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( color );
+    _context.fillRect( topLeftX, topLeftY, width, height );
+  }
+
+  @SuppressWarnings( "SameParameterValue" )
   void drawText( final double bottomLeftX,
                  final double bottomLeftY,
                  @Nonnull final String text,

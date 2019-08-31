@@ -3,6 +3,7 @@ package org.realityforge.arcade.racing;
 import com.google.gwt.core.client.EntryPoint;
 import elemental2.dom.DOMRect;
 import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.HTMLHtmlElement;
 import elemental2.dom.HTMLImageElement;
 import elemental2.dom.KeyboardEvent;
@@ -29,13 +30,18 @@ public class Racing
   @Override
   public void onModuleLoad()
   {
+    _renderer = new Renderer();
+
+    // Render a loading screen for when the network is slow...
+    final HTMLCanvasElement canvas = _renderer.getCanvas();
+    _renderer.drawRect( 0, 0, canvas.width, canvas.height, "black" );
+    _renderer.drawText( canvas.width / 2D, canvas.height / 2D, "Loading...", "white" );
+
     _imageAssets = new ImageAssets( this::onReady );
   }
 
   private void onReady()
   {
-    _renderer = new Renderer();
-
     _renderer.getCanvas().addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
     DomGlobal.document.addEventListener( "keydown", e -> onKeyPress( (KeyboardEvent) e ) );
     DomGlobal.document.addEventListener( "keyup", e -> onKeyRelease( (KeyboardEvent) e ) );
