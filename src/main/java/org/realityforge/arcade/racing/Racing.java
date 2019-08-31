@@ -46,9 +46,15 @@ public class Racing
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     };
+  @SuppressWarnings( "unused" )
+  private static final int TRACK_ROAD = 0;
+  private static final int TRACK_WALL = 1;
+  private static final int TRACK_START = 2;
+
   private static final double TURN_RATE = 0.04D;
-  private static final double ACCEL_RATE = 0.4D;
-  private static final double FRICTION_RATIO = 0.04;
+  private static final double DRIVE_POWER = 0.5D;
+  private static final double REVERSE_POWER = 0.2D;
+  private static final double SPEED_DECAY_RATE = 0.04;
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
   private HTMLImageElement _carImage;
@@ -217,7 +223,7 @@ public class Racing
 
   private void moveCar()
   {
-    _carSpeed *= (1.0 - FRICTION_RATIO) ;
+    _carSpeed *= ( 1.0 - SPEED_DECAY_RATE );
     if ( _leftHeld )
     {
       _carAngle -= TURN_RATE;
@@ -228,11 +234,11 @@ public class Racing
     }
     if ( _accelerateHeld )
     {
-      _carSpeed += ACCEL_RATE;
+      _carSpeed += DRIVE_POWER;
     }
     if ( _brakeHeld )
     {
-      _carSpeed -= ACCEL_RATE;
+      _carSpeed -= REVERSE_POWER;
     }
 
     _carX += Math.cos( _carAngle ) * _carSpeed;
@@ -248,7 +254,7 @@ public class Racing
     {
       for ( int j = 0; j < TRACK_ROWS; j++ )
       {
-        if ( 2 == world[ trackIndex( i, j ) ] )
+        if ( TRACK_START == world[ trackIndex( i, j ) ] )
         {
           _carX = i * TRACK_WIDTH + ( TRACK_WIDTH / 2 );
           _carY = j * TRACK_HEIGHT + ( TRACK_HEIGHT / 2 );
@@ -264,7 +270,7 @@ public class Racing
     final int carTrackRow = toTrackRow( _carY );
     if ( isValidTrackCoordinates( carTrackCol, carTrackRow ) )
     {
-      if ( 1 == world[ trackIndex( carTrackCol, carTrackRow ) ] )
+      if ( TRACK_WALL == world[ trackIndex( carTrackCol, carTrackRow ) ] )
       {
         // This is to reverse action of frame to avoid car getting stuck in the wall before we reverse direction
         // otherwise next frame could see car try to reverse out when inside the wall and not make it out
@@ -355,7 +361,7 @@ public class Racing
       final double rowY = i * TRACK_HEIGHT;
       for ( int j = 0; j < TRACK_COLUMNS; j++ )
       {
-        if ( 1 == world[ trackIndex( j, i ) ] )
+        if ( TRACK_WALL == world[ trackIndex( j, i ) ] )
         {
           drawRect( TRACK_WIDTH * j, rowY, TRACK_WIDTH - TRACK_GAP, TRACK_HEIGHT - TRACK_GAP, "blue" );
         }
