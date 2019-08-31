@@ -3,64 +3,53 @@ package org.realityforge.arcade.racing;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.Event;
 import elemental2.dom.HTMLImageElement;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 final class ImageAssets
 {
   @Nonnull
+  private final Set<String> _imageNames = new HashSet<>(  );
+  @Nonnull
+  private final Map<String, HTMLImageElement> _images = new HashMap<>();
+  @Nonnull
   private final Runnable _onReady;
-  @Nonnull
-  private final HTMLImageElement _carImage;
-  @Nonnull
-  private final HTMLImageElement _roadImage;
-  @Nonnull
-  private final HTMLImageElement _wallImage;
-  private int _imagesLoading = 3;
+  private int _loadedImageCount;
 
   ImageAssets( @Nonnull final Runnable onReady )
   {
     _onReady = Objects.requireNonNull( onReady );
-    _carImage = (HTMLImageElement) DomGlobal.document.createElement( "img" );
-    _roadImage = (HTMLImageElement) DomGlobal.document.createElement( "img" );
-    _wallImage = (HTMLImageElement) DomGlobal.document.createElement( "img" );
-
-    _carImage.onload = this::onImageLoaded;
-    _roadImage.onload = this::onImageLoaded;
-    _wallImage.onload = this::onImageLoaded;
-
-    _carImage.src = "car.png";
-    _roadImage.src = "track_road.png";
-    _wallImage.src = "track_wall.png";
-  }
-
-  @Nonnull
-  HTMLImageElement getCarImage()
-  {
-    return _carImage;
-  }
-
-  @Nonnull
-  HTMLImageElement getRoadImage()
-  {
-    return _roadImage;
-  }
-
-  @Nonnull
-  HTMLImageElement getWallImage()
-  {
-    return _wallImage;
+    _imageNames.add( "car" );
+    _imageNames.add( "track_road" );
+    _imageNames.add( "track_wall" );
+    for ( final String imageName : _imageNames )
+    {
+      final HTMLImageElement img = (HTMLImageElement) DomGlobal.document.createElement( "img" );
+      img.onload = this::onImageLoaded;
+      img.src = imageName + ".png";
+      _images.put( imageName, img );
+    }
   }
 
   @Nullable
   private Object onImageLoaded( @Nonnull final Event event )
   {
-    _imagesLoading--;
-    if ( 0 == _imagesLoading )
+    _loadedImageCount++;
+    if ( _imageNames.size() == _loadedImageCount )
     {
       _onReady.run();
     }
     return null;
+  }
+
+  @Nonnull
+  HTMLImageElement getImageByName( @Nonnull final String name )
+  {
+    return Objects.requireNonNull( _images.get( name ) );
   }
 }

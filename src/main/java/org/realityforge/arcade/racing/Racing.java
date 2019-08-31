@@ -201,7 +201,8 @@ public class Racing
     drawWorld();
 
     final Body body = _car.getBody();
-    _renderer.drawImageWithRotation( _imageAssets.getCarImage(), body.getX(), body.getY(), body.getAngle() );
+    final HTMLImageElement carImage = _imageAssets.getImageByName( "car" );
+    _renderer.drawImageWithRotation( carImage, body.getX(), body.getY(), body.getAngle() );
 
     if ( _showMouseCoords )
     {
@@ -220,13 +221,14 @@ public class Racing
 
   private void drawWorld()
   {
+    final HTMLImageElement roadTile = _imageAssets.getImageByName( "track_road" );
+    final HTMLImageElement wallTile = _imageAssets.getImageByName( "track_wall" );
     for ( int i = 0; i < World.ROW_COUNT; i++ )
     {
       final double rowY = i * World.CELL_HEIGHT;
       for ( int j = 0; j < World.COLUMN_COUNT; j++ )
       {
-        final HTMLImageElement tile =
-          World.CELL_WALL_TYPE == _world.getCell( j, i ) ? _imageAssets.getWallImage() : _imageAssets.getRoadImage();
+        final HTMLImageElement tile = World.CELL_WALL_TYPE == _world.getCell( j, i ) ? wallTile : roadTile;
         _renderer.drawImage( tile, World.CELL_WIDTH * j, rowY );
       }
     }
