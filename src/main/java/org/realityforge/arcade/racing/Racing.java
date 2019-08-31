@@ -51,6 +51,7 @@ public class Racing
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     };
+  private static final double FRICTION_RATIO = 0.04;
   private HTMLCanvasElement _canvas;
   private CanvasRenderingContext2D _context;
   private HTMLImageElement _carImage;
@@ -199,6 +200,7 @@ public class Racing
 
   private void moveCar()
   {
+    _carSpeed *= (1.0 - FRICTION_RATIO) ;
     _carX += _carSpeedX;
     _carY += _carSpeedY;
 
