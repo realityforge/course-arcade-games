@@ -1,30 +1,23 @@
 package org.realityforge.arcade.racing;
 
 import com.google.gwt.core.client.EntryPoint;
-import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.DOMRect;
 import elemental2.dom.DomGlobal;
-import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.HTMLHtmlElement;
-import elemental2.dom.HTMLImageElement;
 import elemental2.dom.KeyboardEvent;
 import elemental2.dom.MouseEvent;
 import javax.annotation.Nonnull;
-import jsinterop.base.Js;
 
 public class Racing
   implements EntryPoint
 {
-  private static final int WORLD_WIDTH = 800;
-  private static final int WORLD_HEIGHT = 600;
   private static final double TRACK_GAP = 2D;
   private static final int FRAMES_PER_SECOND = 30;
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
-  private HTMLCanvasElement _canvas;
-  private CanvasRenderingContext2D _context;
   private final World _world = new World();
   private final Car _car = new Car();
+  private Renderer _renderer;
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
   private boolean _showTrackCoords = false;
@@ -36,13 +29,9 @@ public class Racing
   public void onModuleLoad()
   {
     _car.getBody().loadImage( "car.png" );
-    _canvas = (HTMLCanvasElement) DomGlobal.document.createElement( "canvas" );
-    _canvas.height = WORLD_HEIGHT;
-    _canvas.width = WORLD_WIDTH;
-    DomGlobal.document.documentElement.appendChild( _canvas );
-    _context = Js.uncheckedCast( _canvas.getContext( "2d" ) );
+    _renderer = new Renderer();
 
-    _canvas.addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
+    _renderer.getCanvas().addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
     DomGlobal.document.addEventListener( "keydown", e -> onKeyPress( (KeyboardEvent) e ) );
     DomGlobal.document.addEventListener( "keyup", e -> onKeyRelease( (KeyboardEvent) e ) );
 
@@ -131,7 +120,7 @@ public class Racing
   @SuppressWarnings( { "unused" } )
   private void calculateMousePosition( @Nonnull final MouseEvent event )
   {
-    final DOMRect rect = _canvas.getBoundingClientRect();
+    final DOMRect rect = _renderer.getCanvas().getBoundingClientRect();
     final HTMLHtmlElement root = DomGlobal.document.documentElement;
 
     // The clientX/clientY properties are the coordinates relative to the client area of the mouse
@@ -205,15 +194,15 @@ public class Racing
   private void renderWorld()
   {
     // Background
-    clearBackground();
+    _renderer.clearBackground();
 
     drawWorld();
 
-    drawBody( _car.getBody() );
+    _renderer.drawBody( _car.getBody() );
 
     if ( _showMouseCoords )
     {
-      drawText( _mouseX, _mouseY, _mouseX + "," + _mouseY, "yellow" );
+      _renderer.drawText( _mouseX, _mouseY, _mouseX + "," + _mouseY, "yellow" );
     }
     else if ( _showTrackCoords )
     {
@@ -221,36 +210,9 @@ public class Racing
       final double trackRow = _world.toCellRow( _mouseY );
       if ( _world.isValidCell( trackCol, trackRow ) )
       {
-        drawText( _mouseX, _mouseY, Math.floor( trackCol ) + "," + Math.floor( trackRow ), "yellow" );
+        _renderer.drawText( _mouseX, _mouseY, Math.floor( trackCol ) + "," + Math.floor( trackRow ), "yellow" );
       }
     }
-  }
-
-  private void drawBody( @Nonnull final Body body )
-  {
-    if ( body.isImageLoaded() )
-    {
-      drawImageWithRotation( body.getImage(), body.getX(), body.getY(), body.getAngle() );
-    }
-  }
-
-  private void drawImageWithRotation( @Nonnull final HTMLImageElement image,
-                                      final double centerX,
-                                      final double centerY,
-                                      final double angleInRadians )
-  {
-    // Save the context and push it onto stack
-    // This is presumable rotation matrix and friends although unclear exactly what is included)
-    _context.save();
-
-    _context.translate( centerX, centerY );
-    _context.rotate( angleInRadians );
-
-    // X/Y indicate center where drawImage is top left corner
-    _context.drawImage( image, -image.width / 2D, -image.height / 2D );
-
-    // Pop state to return to transform matrix prior to method call
-    _context.restore();
   }
 
   private void drawWorld()
@@ -262,35 +224,13 @@ public class Racing
       {
         if ( World.CELL_WALL_TYPE == _world.getCell( j, i ) )
         {
-          drawRect( World.CELL_WIDTH * j, rowY, World.CELL_WIDTH - TRACK_GAP, World.CELL_HEIGHT - TRACK_GAP, "blue" );
+          _renderer.drawRect( World.CELL_WIDTH * j,
+                              rowY,
+                              World.CELL_WIDTH - TRACK_GAP,
+                              World.CELL_HEIGHT - TRACK_GAP,
+                              "blue" );
         }
       }
     }
-  }
-
-  private void clearBackground()
-  {
-    drawRect( 0D, 0D, _canvas.width, _canvas.height, "black" );
-  }
-
-  @SuppressWarnings( "SameParameterValue" )
-  private void drawText( final double bottomLeftX,
-                         final double bottomLeftY,
-                         @Nonnull final String text,
-                         @Nonnull final String color )
-  {
-    _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( color );
-    _context.fillText( text, bottomLeftX, bottomLeftY );
-  }
-
-  @SuppressWarnings( "SameParameterValue" )
-  private void drawRect( final double topLeftX,
-                         final double topLeftY,
-                         final double width,
-                         final double height,
-                         @Nonnull final String color )
-  {
-    _context.fillStyle = CanvasRenderingContext2D.FillStyleUnionType.of( color );
-    _context.fillRect( topLeftX, topLeftY, width, height );
   }
 }
