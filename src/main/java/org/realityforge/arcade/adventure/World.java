@@ -36,14 +36,6 @@ final class World
   static final double CELL_WIDTH = 800D / COLUMN_COUNT;
   static final double CELL_HEIGHT = 40D;
 
-  @Nullable
-  WorldPosition toPosition( final double x, final double y )
-  {
-    final int column = toCellColumn( x );
-    final int row = toCellRow( y );
-    return isValidCell( column, row ) ? new WorldPosition( column, row ) : null;
-  }
-
   int getCell( final int column, final int row )
   {
     return getCellAtIndex( cellIndex( column, row ) );
