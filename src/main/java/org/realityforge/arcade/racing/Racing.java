@@ -9,7 +9,6 @@ import elemental2.dom.HTMLImageElement;
 import elemental2.dom.KeyboardEvent;
 import elemental2.dom.MouseEvent;
 import javax.annotation.Nonnull;
-import jsinterop.base.Js;
 
 public class Racing
   implements EntryPoint
@@ -243,11 +242,6 @@ public class Racing
       {
         final int cell = _world.getCell( j, i );
         final HTMLImageElement tile = _tiles[ cell ];
-        if( null == tile)
-        {
-          Js.debugger();
-          DomGlobal.console.log( "Arg" );
-        }
         _renderer.drawImage( tile, World.CELL_WIDTH * j, rowY );
       }
     }
