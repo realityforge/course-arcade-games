@@ -17,8 +17,8 @@ public class Racing
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
   private final World _world = new World();
-  private final Car _car1 = new Car();
-  private final Car _car2 = new Car();
+  private final Car _car1 = new Car( "Blue Storm" );
+  private final Car _car2 = new Car( "Green Machine" );
   private Renderer _renderer;
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;

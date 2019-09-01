@@ -1,5 +1,6 @@
 package org.realityforge.arcade.racing;
 
+import java.util.Objects;
 import javax.annotation.Nonnull;
 
 final class Car
@@ -11,10 +12,23 @@ final class Car
   private static final double MIN_SPEED_TO_TURN = 0.5;
   @Nonnull
   private final Body _body = new Body();
+  @Nonnull
+  private final String _name;
   private boolean _accelerateHeld = false;
   private boolean _brakeHeld = false;
   private boolean _leftHeld = false;
   private boolean _rightHeld = false;
+
+  Car( @Nonnull final String name )
+  {
+    _name = Objects.requireNonNull( name );
+  }
+
+  @Nonnull
+   String getName()
+  {
+    return _name;
+  }
 
   @Nonnull
   Body getBody()
