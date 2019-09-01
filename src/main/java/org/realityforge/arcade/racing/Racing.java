@@ -218,7 +218,13 @@ public class Racing
   private void carCollisionDetection( @Nonnull final Car car )
   {
     final Body body = car.getBody();
-    if ( _world.isSolid( _world.getCell( body ) ) )
+    final int cell = _world.getCell( body );
+    if ( World.CELL_GOAL_TYPE == cell )
+    {
+      DomGlobal.console.log( car.getName() + " wins!" );
+      resetGame();
+    }
+    else if ( _world.isSolid( cell ) )
     {
       // This is to reverse action of frame to avoid car getting stuck in the wall before we reverse direction
       // otherwise next frame could see car try to reverse out when inside the wall and not make it out
