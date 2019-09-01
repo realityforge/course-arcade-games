@@ -36,7 +36,7 @@ final class World
   static final double CELL_WIDTH = 50D;
   static final double CELL_HEIGHT = 50D;
 
-  int getCell( final int column, final int row )
+  private int getCell( final int column, final int row )
   {
     return getCellAtIndex( cellIndex( column, row ) );
   }
