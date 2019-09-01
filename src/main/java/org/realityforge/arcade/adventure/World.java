@@ -31,10 +31,10 @@ final class World
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
     };
-  static final int COLUMN_COUNT = 20;
-  static final int ROW_COUNT = 15;
-  static final double CELL_WIDTH = 800D / COLUMN_COUNT;
-  static final double CELL_HEIGHT = 40D;
+  static final int COLUMN_COUNT = 16;
+  static final int ROW_COUNT = 12;
+  static final double CELL_WIDTH = 50D;
+  static final double CELL_HEIGHT = 50D;
 
   int getCell( final int column, final int row )
   {
