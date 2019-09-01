@@ -22,7 +22,7 @@ public class Adventure
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
   private boolean _showTrackCoords = false;
-  private boolean _car1ToMouse = false;
+  private boolean _warrior1ToMouse = false;
   private double _mouseX;
   private double _mouseY;
   private ImageAssets _imageAssets;
@@ -79,15 +79,15 @@ public class Adventure
       _showTrackCoords = !_showTrackCoords;
       _showMouseCoords = false;
     }
-    // the 3 key instantly transports car to mouse and changes direction to left direction
+    // the 3 key instantly transports warrior to mouse and changes direction to left direction
     else if ( "3".equals( event.key ) )
     {
-      carToMouse( _warrior );
+      warriorToMouse( _warrior );
     }
-    // the 4 key transports car to mouse when the mouse moves
+    // the 4 key transports warrior to mouse when the mouse moves
     else if ( "5".equals( event.key ) )
     {
-      _car1ToMouse = !_car1ToMouse;
+      _warrior1ToMouse = !_warrior1ToMouse;
     }
     else if ( !controlKey( event, true ) )
     {
@@ -139,13 +139,13 @@ public class Adventure
     _mouseX = event.clientX - rect.x - root.scrollLeft;
     _mouseY = event.clientY - rect.top - root.scrollTop;
 
-    if ( _car1ToMouse )
+    if ( _warrior1ToMouse )
     {
-      carToMouse( _warrior );
+      warriorToMouse( _warrior );
     }
   }
 
-  private void carToMouse( @Nonnull final Warrior warrior )
+  private void warriorToMouse( @Nonnull final Warrior warrior )
   {
     final Body body = warrior.getBody();
     body.setX( _mouseX );
@@ -167,10 +167,10 @@ public class Adventure
   {
     _warrior.update();
 
-    carCollisionDetection( _warrior );
+    warriorCollisionDetection( _warrior );
   }
 
-  private void resetCar( @Nonnull final Warrior warrior, final int startCellType )
+  private void resetWarrior( @Nonnull final Warrior warrior, final int startCellType )
   {
     final Body body = warrior.getBody();
     body.setSpeed( 0 );
@@ -182,7 +182,7 @@ public class Adventure
     body.setY( startCell.getRow() * World.CELL_HEIGHT + ( World.CELL_HEIGHT / 2 ) );
   }
 
-  private void carCollisionDetection( @Nonnull final Warrior warrior )
+  private void warriorCollisionDetection( @Nonnull final Warrior warrior )
   {
     final Body body = warrior.getBody();
     final int cell = _world.getCell( body );
@@ -193,15 +193,15 @@ public class Adventure
     }
     else if ( _world.isSolid( cell ) )
     {
-      // This is to reverse action of frame to avoid car getting stuck in the wall before we reverse direction
-      // otherwise next frame could see car try to reverse out when inside the wall and not make it out
+      // This is to reverse action of frame to avoid warrior getting stuck in the wall before we reverse direction
+      // otherwise next frame could see warrior try to reverse out when inside the wall and not make it out
       warrior.reverseMove();
     }
   }
 
   private void resetGame()
   {
-    resetCar( _warrior, World.CELL_PLAYER1_START_TYPE );
+    resetWarrior( _warrior, World.CELL_PLAYER1_START_TYPE );
   }
 
   private void renderWorld()
@@ -228,8 +228,8 @@ public class Adventure
   private void renderWarrior( @Nonnull final Warrior warrior, @Nonnull final String image )
   {
     final Body body = warrior.getBody();
-    final HTMLImageElement carImage = _imageAssets.getImageByName( image );
-    _renderer.drawImageWithRotation( carImage, body.getX(), body.getY(), body.getAngle() );
+    final HTMLImageElement warriorImage = _imageAssets.getImageByName( image );
+    _renderer.drawImageWithRotation( warriorImage, body.getX(), body.getY(), body.getAngle() );
   }
 
   private void drawWorld()
