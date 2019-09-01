@@ -43,11 +43,11 @@ public class Adventure
 
   private void onReady()
   {
-    _tiles[ 0 ] = _imageAssets.getImageByName( "track_road" );
-    _tiles[ 1 ] = _imageAssets.getImageByName( "track_wall" );
-    _tiles[ 2 ] = _imageAssets.getImageByName( "track_goal" );
-    _tiles[ 3 ] = _imageAssets.getImageByName( "track_tree" );
-    _tiles[ 4 ] = _imageAssets.getImageByName( "track_flag" );
+    _tiles[ 0 ] = _imageAssets.getImageByName( "world_road" );
+    _tiles[ 1 ] = _imageAssets.getImageByName( "world_wall" );
+    _tiles[ 2 ] = _imageAssets.getImageByName( "world_goal" );
+    _tiles[ 3 ] = _imageAssets.getImageByName( "world_tree" );
+    _tiles[ 4 ] = _imageAssets.getImageByName( "world_flag" );
     _tiles[ 5 ] = _tiles[ 0 ];
     _tiles[ 6 ] = _tiles[ 0 ];
 
@@ -208,7 +208,7 @@ public class Adventure
   {
     drawWorld();
 
-    renderCar( _warrior, "car" );
+    renderCar( _warrior, "warrior" );
 
     if ( _showMouseCoords )
     {
