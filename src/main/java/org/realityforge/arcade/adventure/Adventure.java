@@ -17,7 +17,7 @@ public class Adventure
   private static final int MILLIS_PER_SECOND = 1000;
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
   private final World _world = new World();
-  private final Car _car1 = new Car( "Blue Storm" );
+  private final Warrior _warrior = new Warrior( "Blue Storm" );
   private Renderer _renderer;
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
@@ -82,7 +82,7 @@ public class Adventure
     // the 3 key instantly transports car to mouse and changes direction to left direction
     else if ( "3".equals( event.key ) )
     {
-      carToMouse( _car1 );
+      carToMouse( _warrior );
     }
     // the 4 key transports car to mouse when the mouse moves
     else if ( "5".equals( event.key ) )
@@ -105,19 +105,19 @@ public class Adventure
   {
     if ( "ArrowLeft".equals( event.code ) )
     {
-      _car1.setLeftHeld( hold );
+      _warrior.setLeftHeld( hold );
     }
     else if ( "ArrowRight".equals( event.code ) )
     {
-      _car1.setRightHeld( hold );
+      _warrior.setRightHeld( hold );
     }
     else if ( "ArrowUp".equals( event.code ) )
     {
-      _car1.setAccelerateHeld( hold );
+      _warrior.setAccelerateHeld( hold );
     }
     else if ( "ArrowDown".equals( event.code ) )
     {
-      _car1.setBrakeHeld( hold );
+      _warrior.setBrakeHeld( hold );
     }
     else
     {
@@ -141,13 +141,13 @@ public class Adventure
 
     if ( _car1ToMouse )
     {
-      carToMouse( _car1 );
+      carToMouse( _warrior );
     }
   }
 
-  private void carToMouse( @Nonnull final Car car )
+  private void carToMouse( @Nonnull final Warrior warrior )
   {
-    final Body body = car.getBody();
+    final Body body = warrior.getBody();
     body.setX( _mouseX );
     body.setY( _mouseY );
     body.setAngle( 0 );
@@ -165,14 +165,14 @@ public class Adventure
 
   private void simulateWorld()
   {
-    _car1.update();
+    _warrior.update();
 
-    carCollisionDetection( _car1 );
+    carCollisionDetection( _warrior );
   }
 
-  private void resetCar( @Nonnull final Car car, final int startCellType )
+  private void resetCar( @Nonnull final Warrior warrior, final int startCellType )
   {
-    final Body body = car.getBody();
+    final Body body = warrior.getBody();
     body.setSpeed( 0 );
     body.setAngle( Math.PI * 0.5D );
 
@@ -182,20 +182,20 @@ public class Adventure
     body.setY( startCell.getRow() * World.CELL_HEIGHT + ( World.CELL_HEIGHT / 2 ) );
   }
 
-  private void carCollisionDetection( @Nonnull final Car car )
+  private void carCollisionDetection( @Nonnull final Warrior warrior )
   {
-    final Body body = car.getBody();
+    final Body body = warrior.getBody();
     final int cell = _world.getCell( body );
     if ( World.CELL_GOAL_TYPE == cell )
     {
-      DomGlobal.console.log( car.getName() + " wins!" );
+      DomGlobal.console.log( warrior.getName() + " wins!" );
       resetGame();
     }
     else if ( _world.isSolid( cell ) )
     {
       // This is to reverse action of frame to avoid car getting stuck in the wall before we reverse direction
       // otherwise next frame could see car try to reverse out when inside the wall and not make it out
-      car.reverseMove();
+      warrior.reverseMove();
 
       // The bounce saps some energy
       body.setSpeed( 0.3 * -body.getSpeed() );
@@ -204,14 +204,14 @@ public class Adventure
 
   private void resetGame()
   {
-    resetCar( _car1, World.CELL_PLAYER1_START_TYPE );
+    resetCar( _warrior, World.CELL_PLAYER1_START_TYPE );
   }
 
   private void renderWorld()
   {
     drawWorld();
 
-    renderCar( _car1, "car" );
+    renderCar( _warrior, "car" );
 
     if ( _showMouseCoords )
     {
@@ -228,9 +228,9 @@ public class Adventure
     }
   }
 
-  private void renderCar( @Nonnull final Car car, @Nonnull final String image )
+  private void renderCar( @Nonnull final Warrior warrior, @Nonnull final String image )
   {
-    final Body body = car.getBody();
+    final Body body = warrior.getBody();
     final HTMLImageElement carImage = _imageAssets.getImageByName( image );
     _renderer.drawImageWithRotation( carImage, body.getX(), body.getY(), body.getAngle() );
   }

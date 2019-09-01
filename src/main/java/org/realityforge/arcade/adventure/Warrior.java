@@ -3,7 +3,7 @@ package org.realityforge.arcade.adventure;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 
-final class Car
+final class Warrior
 {
   private static final double TURN_RATE = 0.05D;
   private static final double DRIVE_POWER = 0.5D;
@@ -19,7 +19,7 @@ final class Car
   private boolean _leftHeld = false;
   private boolean _rightHeld = false;
 
-  Car( @Nonnull final String name )
+  Warrior( @Nonnull final String name )
   {
     _name = Objects.requireNonNull( name );
   }
