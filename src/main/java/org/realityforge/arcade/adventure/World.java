@@ -9,28 +9,24 @@ final class World
   static final int CELL_ROAD_TYPE = 0;
   private static final int CELL_WALL_TYPE = 1;
   static final int CELL_GOAL_TYPE = 2;
-  private static final int CELL_TREE_TYPE = 3;
-  private static final int CELL_FLAG_TYPE = 4;
+  private static final int CELL_KEY_TYPE = 3;
+  private static final int CELL_DOOR_TYPE = 4;
   static final int CELL_PLAYER1_START_TYPE = 5;
-  static final int CELL_PLAYER2_START_TYPE = 6;
-  static final int MAX_CELL_TYPE_COUNT = 7;
+  static final int MAX_CELL_TYPE_COUNT = 6;
   private static final int[] world = new int[]{
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 1, 5, 6, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 4, 1, 1, 0, 0, 1,
-    1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 4, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 1, 1, 3, 3, 3, 3, 3, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-    1, 0, 0, 0, 1, 3, 3, 3, 3, 3, 3, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 1, 3, 3, 3, 1, 1, 1, 1, 0, 0, 1, 0, 4, 0, 0, 1,
-    1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
-    };
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 1, 3, 3, 1,
+    1, 0, 3, 0, 3, 0, 1, 0, 5, 0, 1, 0, 1, 0, 1, 1,
+    1, 0, 0, 0, 0, 0, 1, 0, 3, 0, 1, 0, 1, 0, 0, 1,
+    1, 1, 1, 4, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 4, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1,
+    1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 0, 1,
+    1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1,
+    1, 0, 4, 0, 4, 0, 4, 0, 2, 0, 1, 1, 1, 1, 1, 1,
+    1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+  };
   static final int COLUMN_COUNT = 16;
   static final int ROW_COUNT = 12;
   static final double CELL_WIDTH = 50D;
@@ -55,7 +51,7 @@ final class World
 
   boolean isSolid( final int flag )
   {
-    return !( CELL_ROAD_TYPE == flag || CELL_PLAYER1_START_TYPE == flag || CELL_PLAYER2_START_TYPE == flag );
+    return CELL_WALL_TYPE == flag || CELL_DOOR_TYPE == flag;
   }
 
   boolean isTransparent( final int cell )
