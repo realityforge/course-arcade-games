@@ -241,7 +241,12 @@ public class Adventure
       double cellX = 0;
       for ( int j = 0; j < World.COLUMN_COUNT; j++ )
       {
-        _renderer.drawImage( _tiles[ _world.getCellAtIndex( index++ ) ], cellX, rowY );
+        final int cell = _world.getCellAtIndex( index++ );
+        if(_world.isTransparent( cell ))
+        {
+          _renderer.drawImage( _tiles[ World.CELL_ROAD_TYPE ], cellX, rowY );
+        }
+        _renderer.drawImage( _tiles[ cell ], cellX, rowY );
         cellX += World.CELL_WIDTH;
       }
       rowY += World.CELL_HEIGHT;

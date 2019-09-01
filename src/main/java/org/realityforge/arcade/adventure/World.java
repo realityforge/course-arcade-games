@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 final class World
 {
   private static final int CELL_INVALID_TYPE = -1;
-  private static final int CELL_ROAD_TYPE = 0;
+  static final int CELL_ROAD_TYPE = 0;
   private static final int CELL_WALL_TYPE = 1;
   static final int CELL_GOAL_TYPE = 2;
   private static final int CELL_TREE_TYPE = 3;
@@ -56,6 +56,11 @@ final class World
   boolean isSolid( final int flag )
   {
     return !( CELL_ROAD_TYPE == flag || CELL_PLAYER1_START_TYPE == flag || CELL_PLAYER2_START_TYPE == flag );
+  }
+
+  boolean isTransparent( final int cell )
+  {
+    return !( CELL_WALL_TYPE == cell );
   }
 
   @Nullable
