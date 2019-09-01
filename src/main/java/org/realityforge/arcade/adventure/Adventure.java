@@ -208,7 +208,7 @@ public class Adventure
   {
     drawWorld();
 
-    renderCar( _warrior, "warrior" );
+    renderWarrior( _warrior, "warrior" );
 
     if ( _showMouseCoords )
     {
@@ -225,7 +225,7 @@ public class Adventure
     }
   }
 
-  private void renderCar( @Nonnull final Warrior warrior, @Nonnull final String image )
+  private void renderWarrior( @Nonnull final Warrior warrior, @Nonnull final String image )
   {
     final Body body = warrior.getBody();
     final HTMLImageElement carImage = _imageAssets.getImageByName( image );
