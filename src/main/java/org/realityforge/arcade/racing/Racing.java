@@ -235,15 +235,17 @@ public class Racing
 
   private void drawWorld()
   {
+    int index = 0;
+    double rowY = 0;
     for ( int i = 0; i < World.ROW_COUNT; i++ )
     {
-      final double rowY = i * World.CELL_HEIGHT;
+      double cellX = 0;
       for ( int j = 0; j < World.COLUMN_COUNT; j++ )
       {
-        final int cell = _world.getCell( j, i );
-        final HTMLImageElement tile = _tiles[ cell ];
-        _renderer.drawImage( tile, World.CELL_WIDTH * j, rowY );
+        _renderer.drawImage( _tiles[ _world.getCellAtIndex( index++ ) ], cellX, rowY );
+        cellX += World.CELL_WIDTH;
       }
+      rowY += World.CELL_HEIGHT;
     }
   }
 }

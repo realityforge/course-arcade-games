@@ -45,7 +45,12 @@ final class World
 
   int getCell( final int column, final int row )
   {
-    return world[ cellIndex( column, row ) ];
+    return getCellAtIndex( cellIndex( column, row ) );
+  }
+
+  int getCellAtIndex( final int index )
+  {
+    return world[ index ];
   }
 
   int getCell( @Nonnull final Body body )
