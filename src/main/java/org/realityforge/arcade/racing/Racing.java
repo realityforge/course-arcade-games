@@ -100,23 +100,7 @@ public class Racing
     {
       _car2ToMouse = !_car1ToMouse;
     }
-    else if ( "ArrowLeft".equals( event.code ) )
-    {
-      _car1.setLeftHeld( true );
-    }
-    else if ( "ArrowRight".equals( event.code ) )
-    {
-      _car1.setRightHeld( true );
-    }
-    else if ( "ArrowUp".equals( event.code ) )
-    {
-      _car1.setAccelerateHeld( true );
-    }
-    else if ( "ArrowDown".equals( event.code ) )
-    {
-      _car1.setBrakeHeld( true );
-    }
-    else
+    else if ( !controlKey( event, true ) )
     {
       return;
     }
@@ -125,27 +109,49 @@ public class Racing
 
   private void onKeyRelease( @Nonnull final KeyboardEvent event )
   {
+    controlKey( event, false );
+  }
+
+  private boolean controlKey( @Nonnull final KeyboardEvent event, final boolean hold )
+  {
     if ( "ArrowLeft".equals( event.code ) )
     {
-      _car1.setLeftHeld( false );
+      _car1.setLeftHeld( hold );
     }
     else if ( "ArrowRight".equals( event.code ) )
     {
-      _car1.setRightHeld( false );
+      _car1.setRightHeld( hold );
     }
     else if ( "ArrowUp".equals( event.code ) )
     {
-      _car1.setAccelerateHeld( false );
+      _car1.setAccelerateHeld( hold );
     }
     else if ( "ArrowDown".equals( event.code ) )
     {
-      _car1.setBrakeHeld( false );
+      _car1.setBrakeHeld( hold );
+    }
+    else if ( "KeyA".equals( event.code ) )
+    {
+      _car2.setLeftHeld( hold );
+    }
+    else if ( "KeyD".equals( event.code ) )
+    {
+      _car2.setRightHeld( hold );
+    }
+    else if ( "KeyW".equals( event.code ) )
+    {
+      _car2.setAccelerateHeld( hold );
+    }
+    else if ( "KeyS".equals( event.code ) )
+    {
+      _car2.setBrakeHeld( hold );
     }
     else
     {
-      return;
+      return false;
     }
     event.preventDefault();
+    return true;
   }
 
   @SuppressWarnings( { "unused" } )
