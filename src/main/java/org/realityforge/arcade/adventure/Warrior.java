@@ -5,17 +5,13 @@ import javax.annotation.Nonnull;
 
 final class Warrior
 {
-  private static final double TURN_RATE = 0.05D;
-  private static final double DRIVE_POWER = 0.5D;
-  private static final double REVERSE_POWER = 0.2D;
-  private static final double SPEED_DECAY_RATE = 0.04;
-  private static final double MIN_SPEED_TO_TURN = 0.5;
+  private static final double MAX_SPEED = 2.9;
   @Nonnull
   private final Body _body = new Body();
   @Nonnull
   private final String _name;
-  private boolean _accelerateHeld = false;
-  private boolean _brakeHeld = false;
+  private boolean _upHeld = false;
+  private boolean _downHeld = false;
   private boolean _leftHeld = false;
   private boolean _rightHeld = false;
 
@@ -36,14 +32,14 @@ final class Warrior
     return _body;
   }
 
-  void setAccelerateHeld( final boolean accelerateHeld )
+  void setUpHeld( final boolean upHeld )
   {
-    _accelerateHeld = accelerateHeld;
+    _upHeld = upHeld;
   }
 
-  void setBrakeHeld( final boolean brakeHeld )
+  void setDownHeld( final boolean downHeld )
   {
-    _brakeHeld = brakeHeld;
+    _downHeld = downHeld;
   }
 
   void setLeftHeld( final boolean leftHeld )
@@ -58,34 +54,8 @@ final class Warrior
 
   void update()
   {
-    _body.setSpeed( _body.getSpeed() * ( 1.0 - SPEED_DECAY_RATE ) );
-    if ( Math.abs( _body.getSpeed() ) > MIN_SPEED_TO_TURN )
-    {
-      if ( _leftHeld )
-      {
-        _body.setAngle( _body.getAngle() - TURN_RATE );
-      }
-      if ( _rightHeld )
-      {
-        _body.setAngle( _body.getAngle() + TURN_RATE );
-      }
-    }
-    if ( _accelerateHeld )
-    {
-      _body.setSpeed( _body.getSpeed() + DRIVE_POWER );
-    }
-    if ( _brakeHeld )
-    {
-      _body.setSpeed( _body.getSpeed() - REVERSE_POWER );
-    }
-
-    move();
-  }
-
-  private void move()
-  {
-    _body.setX( _body.getX() + Math.cos( _body.getAngle() ) * _body.getSpeed() );
-    _body.setY( _body.getY() + Math.sin( _body.getAngle() ) * _body.getSpeed() );
+    _body.setX( _body.getX() + ( _leftHeld ? -MAX_SPEED : 0 ) + ( _rightHeld ? MAX_SPEED : 0 ) );
+    _body.setY( _body.getY() + ( _upHeld ? -MAX_SPEED : 0 ) + ( _downHeld ? MAX_SPEED : 0 ) );
   }
 
   /**
@@ -93,7 +63,7 @@ final class Warrior
    */
   void reverseMove()
   {
-    _body.setX( _body.getX() - Math.cos( _body.getAngle() ) * _body.getSpeed() );
-    _body.setY( _body.getY() - Math.sin( _body.getAngle() ) * _body.getSpeed() );
+    _body.setX( _body.getX() + ( _leftHeld ? MAX_SPEED : 0 ) + ( _rightHeld ? -MAX_SPEED : 0 ) );
+    _body.setY( _body.getY() + ( _upHeld ? MAX_SPEED : 0 ) + ( _downHeld ? -MAX_SPEED : 0 ) );
   }
 }

@@ -113,11 +113,11 @@ public class Adventure
     }
     else if ( "ArrowUp".equals( event.code ) )
     {
-      _warrior.setAccelerateHeld( hold );
+      _warrior.setUpHeld( hold );
     }
     else if ( "ArrowDown".equals( event.code ) )
     {
-      _warrior.setBrakeHeld( hold );
+      _warrior.setDownHeld( hold );
     }
     else
     {
@@ -196,9 +196,6 @@ public class Adventure
       // This is to reverse action of frame to avoid car getting stuck in the wall before we reverse direction
       // otherwise next frame could see car try to reverse out when inside the wall and not make it out
       warrior.reverseMove();
-
-      // The bounce saps some energy
-      body.setSpeed( 0.3 * -body.getSpeed() );
     }
   }
 
