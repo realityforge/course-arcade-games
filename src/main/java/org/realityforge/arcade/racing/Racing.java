@@ -203,7 +203,7 @@ public class Racing
     carCollisionDetection( _car2 );
   }
 
-  private void resetCar( final Car car, final int startCellType )
+  private void resetCar( @Nonnull final Car car, final int startCellType )
   {
     final Body body = car.getBody();
     body.setSpeed( 0 );
