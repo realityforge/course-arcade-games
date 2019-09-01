@@ -6,12 +6,13 @@ import javax.annotation.Nullable;
 final class World
 {
   private static final int CELL_INVALID_TYPE = -1;
-  static final int CELL_ROAD_TYPE = 0;
-  static final int CELL_WALL_TYPE = 1;
+  private static final int CELL_ROAD_TYPE = 0;
+  private static final int CELL_WALL_TYPE = 1;
   private static final int CELL_START_TYPE = 2;
-  static final int CELL_GOAL_TYPE = 3;
-  static final int CELL_TREE_TYPE = 4;
-  static final int CELL_FLAG_TYPE = 5;
+  private static final int CELL_GOAL_TYPE = 3;
+  private static final int CELL_TREE_TYPE = 4;
+  private static final int CELL_FLAG_TYPE = 5;
+  static final int MAX_CELL_TYPE_COUNT = 6;
   private static final int[] world = new int[]{
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,

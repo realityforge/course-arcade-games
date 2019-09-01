@@ -9,6 +9,7 @@ import elemental2.dom.HTMLImageElement;
 import elemental2.dom.KeyboardEvent;
 import elemental2.dom.MouseEvent;
 import javax.annotation.Nonnull;
+import jsinterop.base.Js;
 
 public class Racing
   implements EntryPoint
@@ -26,6 +27,7 @@ public class Racing
   private double _mouseX;
   private double _mouseY;
   private ImageAssets _imageAssets;
+  private final HTMLImageElement[] _tiles = new HTMLImageElement[ World.MAX_CELL_TYPE_COUNT ];
 
   @Override
   public void onModuleLoad()
@@ -42,6 +44,13 @@ public class Racing
 
   private void onReady()
   {
+    _tiles[ 0 ] = _imageAssets.getImageByName( "track_road" );
+    _tiles[ 1 ] = _imageAssets.getImageByName( "track_wall" );
+    _tiles[ 2 ] = _tiles[ 0 ];
+    _tiles[ 3 ] = _imageAssets.getImageByName( "track_goal" );
+    _tiles[ 4 ] = _imageAssets.getImageByName( "track_tree" );
+    _tiles[ 5 ] = _imageAssets.getImageByName( "track_flag" );
+
     _renderer.getCanvas().addEventListener( "mousemove", e -> calculateMousePosition( (MouseEvent) e ) );
     DomGlobal.document.addEventListener( "keydown", e -> onKeyPress( (KeyboardEvent) e ) );
     DomGlobal.document.addEventListener( "keyup", e -> onKeyRelease( (KeyboardEvent) e ) );
@@ -227,23 +236,18 @@ public class Racing
 
   private void drawWorld()
   {
-    final HTMLImageElement roadTile = _imageAssets.getImageByName( "track_road" );
-    final HTMLImageElement wallTile = _imageAssets.getImageByName( "track_wall" );
-    final HTMLImageElement goalTile = _imageAssets.getImageByName( "track_goal" );
-    final HTMLImageElement flagTile = _imageAssets.getImageByName( "track_flag" );
-    final HTMLImageElement treeTile = _imageAssets.getImageByName( "track_tree" );
     for ( int i = 0; i < World.ROW_COUNT; i++ )
     {
       final double rowY = i * World.CELL_HEIGHT;
       for ( int j = 0; j < World.COLUMN_COUNT; j++ )
       {
         final int cell = _world.getCell( j, i );
-        final HTMLImageElement tile =
-          World.CELL_WALL_TYPE == cell ? wallTile :
-          World.CELL_GOAL_TYPE == cell ? goalTile :
-          World.CELL_FLAG_TYPE == cell ? flagTile :
-          World.CELL_TREE_TYPE == cell ? treeTile :
-          roadTile;
+        final HTMLImageElement tile = _tiles[ cell ];
+        if( null == tile)
+        {
+          Js.debugger();
+          DomGlobal.console.log( "Arg" );
+        }
         _renderer.drawImage( tile, World.CELL_WIDTH * j, rowY );
       }
     }
