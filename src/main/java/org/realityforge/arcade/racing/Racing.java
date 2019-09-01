@@ -251,7 +251,7 @@ public class Racing
     }
   }
 
-  private void renderCar( @Nonnull final Car car, @Nonnull final String image  )
+  private void renderCar( @Nonnull final Car car, @Nonnull final String image )
   {
     final Body body = car.getBody();
     final HTMLImageElement carImage = _imageAssets.getImageByName( image );
