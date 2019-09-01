@@ -8,25 +8,26 @@ final class World
   private static final int CELL_INVALID_TYPE = -1;
   private static final int CELL_ROAD_TYPE = 0;
   private static final int CELL_WALL_TYPE = 1;
-  private static final int CELL_START_TYPE = 2;
-  private static final int CELL_GOAL_TYPE = 3;
-  private static final int CELL_TREE_TYPE = 4;
-  private static final int CELL_FLAG_TYPE = 5;
-  static final int MAX_CELL_TYPE_COUNT = 6;
+  private static final int CELL_GOAL_TYPE = 2;
+  private static final int CELL_TREE_TYPE = 3;
+  private static final int CELL_FLAG_TYPE = 4;
+  static final int CELL_PLAYER1_START_TYPE = 5;
+  static final int CELL_PLAYER2_START_TYPE = 6;
+  static final int MAX_CELL_TYPE_COUNT = 7;
   private static final int[] world = new int[]{
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 1, 5, 6, 1, 0, 0, 0, 0, 0, 0, 0, 1,
     1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 5, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 5, 1, 1, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 1, 5, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 1, 4, 4, 4, 4, 4, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 1, 1, 4, 4, 4, 4, 4, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-    1, 0, 0, 0, 1, 4, 4, 4, 4, 4, 4, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 1, 4, 4, 4, 1, 1, 1, 1, 0, 0, 1, 0, 5, 0, 0, 1,
+    1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 4, 1, 1, 0, 0, 1,
+    1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1,
+    1, 4, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3, 1, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 1, 1, 3, 3, 3, 3, 3, 1, 0, 0, 1, 0, 0, 0, 1, 1,
+    1, 0, 0, 0, 1, 3, 3, 3, 3, 3, 3, 1, 0, 0, 1, 0, 0, 0, 0, 1,
+    1, 0, 0, 0, 1, 3, 3, 3, 1, 1, 1, 1, 0, 0, 1, 0, 4, 0, 0, 1,
     1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 1,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 1,
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
     };
@@ -62,17 +63,17 @@ final class World
 
   boolean isSolid( final int flag )
   {
-    return !( CELL_ROAD_TYPE == flag || CELL_START_TYPE == flag );
+    return !( CELL_ROAD_TYPE == flag || CELL_PLAYER1_START_TYPE == flag || CELL_PLAYER2_START_TYPE == flag );
   }
 
   @Nullable
-  WorldPosition getStartCell()
+  WorldPosition getFirstCellMatching( final int type )
   {
     for ( int i = 0; i < COLUMN_COUNT; i++ )
     {
       for ( int j = 0; j < ROW_COUNT; j++ )
       {
-        if ( CELL_START_TYPE == getCell( i, j ) )
+        if ( type == getCell( i, j ) )
         {
           return new WorldPosition( i, j );
         }
