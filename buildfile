@@ -2,7 +2,7 @@ require 'buildr/git_auto_version'
 require 'buildr/gwt'
 require 'reality/naming'
 
-GWT_MODULES = %w(Tennis Breakout Racing)
+GWT_MODULES = %w(Tennis Breakout Racing Adventure)
 
 desc 'The How to Program Games using HTML5 Canvas coursework'
 define 'course-arcade-games' do

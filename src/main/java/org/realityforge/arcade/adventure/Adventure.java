@@ -18,13 +18,11 @@ public class Adventure
   private static final int FRAME_DELAY = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
   private final World _world = new World();
   private final Car _car1 = new Car( "Blue Storm" );
-  private final Car _car2 = new Car( "Green Machine" );
   private Renderer _renderer;
   private boolean _simulationActive = true;
   private boolean _showMouseCoords = false;
   private boolean _showTrackCoords = false;
   private boolean _car1ToMouse = false;
-  private boolean _car2ToMouse = false;
   private double _mouseX;
   private double _mouseY;
   private ImageAssets _imageAssets;
@@ -86,19 +84,10 @@ public class Adventure
     {
       carToMouse( _car1 );
     }
-    // the 3 key instantly transports car to mouse and changes direction to left direction
-    else if ( "4".equals( event.key ) )
-    {
-      carToMouse( _car2 );
-    }
     // the 4 key transports car to mouse when the mouse moves
     else if ( "5".equals( event.key ) )
     {
       _car1ToMouse = !_car1ToMouse;
-    }
-    else if ( "6".equals( event.key ) )
-    {
-      _car2ToMouse = !_car1ToMouse;
     }
     else if ( !controlKey( event, true ) )
     {
@@ -130,22 +119,6 @@ public class Adventure
     {
       _car1.setBrakeHeld( hold );
     }
-    else if ( "KeyA".equals( event.code ) )
-    {
-      _car2.setLeftHeld( hold );
-    }
-    else if ( "KeyD".equals( event.code ) )
-    {
-      _car2.setRightHeld( hold );
-    }
-    else if ( "KeyW".equals( event.code ) )
-    {
-      _car2.setAccelerateHeld( hold );
-    }
-    else if ( "KeyS".equals( event.code ) )
-    {
-      _car2.setBrakeHeld( hold );
-    }
     else
     {
       return false;
@@ -170,10 +143,6 @@ public class Adventure
     {
       carToMouse( _car1 );
     }
-    if ( _car2ToMouse )
-    {
-      carToMouse( _car2 );
-    }
   }
 
   private void carToMouse( @Nonnull final Car car )
@@ -197,10 +166,8 @@ public class Adventure
   private void simulateWorld()
   {
     _car1.update();
-    _car2.update();
 
     carCollisionDetection( _car1 );
-    carCollisionDetection( _car2 );
   }
 
   private void resetCar( @Nonnull final Car car, final int startCellType )
@@ -238,7 +205,6 @@ public class Adventure
   private void resetGame()
   {
     resetCar( _car1, World.CELL_PLAYER1_START_TYPE );
-    resetCar( _car2, World.CELL_PLAYER2_START_TYPE );
   }
 
   private void renderWorld()
@@ -246,7 +212,6 @@ public class Adventure
     drawWorld();
 
     renderCar( _car1, "car" );
-    renderCar( _car2, "player2car" );
 
     if ( _showMouseCoords )
     {

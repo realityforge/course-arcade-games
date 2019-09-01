@@ -25,7 +25,6 @@ final class ImageAssets
   {
     _onReady = Objects.requireNonNull( onReady );
     _imageNames.add( "car" );
-    _imageNames.add( "player2car" );
     _imageNames.add( "track_road" );
     _imageNames.add( "track_wall" );
     _imageNames.add( "track_flag" );
