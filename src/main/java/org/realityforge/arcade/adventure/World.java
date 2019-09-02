@@ -5,12 +5,12 @@ import javax.annotation.Nullable;
 
 final class World
 {
-  private static final int CELL_INVALID_TYPE = -1;
+   static final int CELL_INVALID_TYPE = -1;
   static final int CELL_ROAD_TYPE = 0;
   private static final int CELL_WALL_TYPE = 1;
   static final int CELL_GOAL_TYPE = 2;
-  private static final int CELL_KEY_TYPE = 3;
-  private static final int CELL_DOOR_TYPE = 4;
+  static final int CELL_KEY_TYPE = 3;
+  static final int CELL_DOOR_TYPE = 4;
   static final int CELL_PLAYER1_START_TYPE = 5;
   static final int MAX_CELL_TYPE_COUNT = 6;
   private static final int[] LEVEL1 = new int[]{
@@ -33,9 +33,24 @@ final class World
   static final double CELL_HEIGHT = 50D;
   private static final int[] world = new int[ COLUMN_COUNT * ROW_COUNT ];
 
-  public void reset()
+  void reset()
   {
     System.arraycopy( LEVEL1, 0, world, 0, world.length );
+  }
+
+  void setCell( @Nonnull final WorldPosition position, final int cellType )
+  {
+    setCell( position.getColumn(), position.getRow(), cellType );
+  }
+
+  void setCell( final int column, final int row, final int cellType )
+  {
+    world[ cellIndex( column, row ) ] = cellType;
+  }
+
+  int getCell( @Nonnull final WorldPosition position )
+  {
+    return getCell( position.getColumn(), position.getRow() );
   }
 
   private int getCell( final int column, final int row )
@@ -53,6 +68,14 @@ final class World
     final int column = toCellColumn( body.getX() );
     final int row = toCellRow( body.getY() );
     return isValidCell( column, row ) ? getCell( column, row ) : CELL_INVALID_TYPE;
+  }
+
+  @Nullable
+  WorldPosition getPosition( final double x, final double y )
+  {
+    final int column = toCellColumn( x );
+    final int row = toCellRow( y );
+    return isValidCell( column, row ) ? new WorldPosition( column, row ) : null;
   }
 
   boolean isSolid( final int flag )

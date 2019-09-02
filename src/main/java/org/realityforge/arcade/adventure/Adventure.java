@@ -27,6 +27,7 @@ public class Adventure
   private double _mouseY;
   private ImageAssets _imageAssets;
   private final HTMLImageElement[] _tiles = new HTMLImageElement[ World.MAX_CELL_TYPE_COUNT ];
+  private int _keyCount;
 
   @Override
   public void onModuleLoad()
@@ -185,11 +186,22 @@ public class Adventure
   private void warriorCollisionDetection( @Nonnull final Warrior warrior )
   {
     final Body body = warrior.getBody();
-    final int cell = _world.getCell( body );
+    final WorldPosition position = _world.getPosition( body.getX(), body.getY() );
+    final int cell = null != position ? _world.getCell( position ) : World.CELL_INVALID_TYPE;
     if ( World.CELL_GOAL_TYPE == cell )
     {
       DomGlobal.console.log( warrior.getName() + " wins!" );
       resetGame();
+    }
+    else if ( World.CELL_KEY_TYPE == cell )
+    {
+      _keyCount++;
+      _world.setCell( position, World.CELL_ROAD_TYPE );
+    }
+    else if ( World.CELL_DOOR_TYPE == cell && _keyCount > 0 )
+    {
+      _keyCount--;
+      _world.setCell( position, World.CELL_ROAD_TYPE );
     }
     else if ( _world.isSolid( cell ) )
     {
