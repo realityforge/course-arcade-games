@@ -243,7 +243,7 @@ public class Adventure
       for ( int j = 0; j < World.COLUMN_COUNT; j++ )
       {
         final int cell = _world.getCellAtIndex( index++ );
-        if(_world.isTransparent( cell ))
+        if ( _world.isTransparent( cell ) )
         {
           _renderer.drawImage( _tiles[ World.CELL_ROAD_TYPE ], cellX, rowY );
         }
