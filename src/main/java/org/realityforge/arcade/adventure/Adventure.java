@@ -201,6 +201,7 @@ public class Adventure
 
   private void resetGame()
   {
+    _world.reset();
     resetWarrior( _warrior, World.CELL_PLAYER1_START_TYPE );
   }
 

@@ -13,7 +13,7 @@ final class World
   private static final int CELL_DOOR_TYPE = 4;
   static final int CELL_PLAYER1_START_TYPE = 5;
   static final int MAX_CELL_TYPE_COUNT = 6;
-  private static final int[] world = new int[]{
+  private static final int[] LEVEL1 = new int[]{
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 1, 3, 3, 1,
     1, 0, 3, 0, 3, 0, 1, 0, 5, 0, 1, 0, 1, 0, 1, 1,
@@ -31,6 +31,12 @@ final class World
   static final int ROW_COUNT = 12;
   static final double CELL_WIDTH = 50D;
   static final double CELL_HEIGHT = 50D;
+  private static final int[] world = new int[ COLUMN_COUNT * ROW_COUNT ];
+
+  public void reset()
+  {
+    System.arraycopy( LEVEL1, 0, world, 0, world.length );
+  }
 
   private int getCell( final int column, final int row )
   {
